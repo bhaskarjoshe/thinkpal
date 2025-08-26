@@ -4,51 +4,13 @@ import re
 
 import requests
 from app.config.logger import logger
+from app.schemas.ui import ui_schema
+from app.services.knowledge_base import search_in_knowledge_base
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-# -----------------------------
-# Knowledge Base tool
-# -----------------------------
-def search_kb(query: str):
-    knowledge = {
-        "ai": [
-            "Learning from data",
-            "Reasoning",
-            "Natural language",
-            "Decision-making",
-        ],
-        "ml": ["Supervised", "Unsupervised", "Reinforcement learning"],
-    }
-    for key, facts in knowledge.items():
-        if key in query.lower():
-            logger.info(f"KB match found for '{key}' → {facts}")
-            return {"facts": facts}
-
-    logger.info(f"No KB match found for query: {query}")
-    return {"facts": []}
-
-
-# -----------------------------
-# Schema for UI components
-# -----------------------------
-ui_schema = {
-    "type": "object",
-    "properties": {
-        "component_type": {"type": "string", "enum": ["card", "quiz", "list"]},
-        "title": {"type": "string"},
-        "content": {"type": "string"},
-        "features": {"type": "array", "items": {"type": "string"}},
-    },
-    "required": ["component_type", "title", "content"],
-}
-
-
-# -----------------------------
-# Orchestrator Agent
-# -----------------------------
 class TutorAgent:
     def __init__(self):
         self.schema = ui_schema
@@ -60,8 +22,7 @@ class TutorAgent:
             )
 
     def run(self, query: str):
-        kb_result = search_kb(query)
-
+        kb_result = search_in_knowledge_base(query)
         prompt = f"""
         You are an AI Tutor.
         Respond ONLY with JSON matching this schema: {self.schema}.
