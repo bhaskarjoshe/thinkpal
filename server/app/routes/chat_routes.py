@@ -2,7 +2,7 @@ from app.config.logger_config import logger
 from app.config.security_config import get_current_user
 from app.schemas.chat_schema import ChatRequest
 from app.schemas.chat_schema import ChatResponse
-from app.schemas.chat_schema import UIComponent
+from app.schemas.ui_schema import UIComponent
 from app.services.chat_service import handle_chat_request
 from fastapi import APIRouter
 from fastapi import Depends

@@ -1,3 +1,7 @@
+from typing import List
+
+from pydantic import BaseModel
+
 ui_schema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "UI Component Schema",
@@ -22,3 +26,10 @@ ui_schema = {
     "required": ["component_type", "title", "content"],
     "additionalProperties": False,
 }
+
+
+class UIComponent(BaseModel):
+    component_type: str
+    title: str
+    content: str
+    features: List[str] = []
