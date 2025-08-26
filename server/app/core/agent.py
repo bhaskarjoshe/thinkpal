@@ -1,98 +1,55 @@
 import json
 import os
 import re
+import uuid
 
-import requests
 from app.config.logger import logger
-from app.schemas.ui import ui_schema
 from app.services.knowledge_base import search_in_knowledge_base
+from app.services.prompt import build_prompt
 from dotenv import load_dotenv
+from google import genai
 
 load_dotenv()
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 class TutorAgent:
     def __init__(self):
-        self.schema = ui_schema
-        self.api_key = os.getenv("OPENROUTER_API_KEY")
-
-        if not self.api_key:
+        if not os.getenv("GEMINI_API_KEY"):
             logger.error(
-                "OPENROUTER_API_KEY is missing! Please set it in your environment."
+                "GEMINI_API_KEY is missing! Please set it in your environment."
             )
 
-    def run(self, query: str):
-        kb_result = search_in_knowledge_base(query)
-        prompt = f"""
-        You are an AI Tutor.
-        Respond ONLY with JSON matching this schema: {self.schema}.
-        Query: {query}
-        Knowledge: {kb_result}
-        """
+    def run(self, query: str, chat_id: str = None):
+        if not chat_id:
+            chat_id = str(uuid.uuid4())
 
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:3000",
-            "X-Title": "AI Tutor",
-        }
-
-        payload = {
-            "model": "mistralai/mistral-small-3.2-24b-instruct:free",
-            "messages": [
-                {"role": "system", "content": "You are an AI Tutor."},
-                {"role": "user", "content": prompt},
-            ],
+        response = {
+            "component_type": "card",
+            "title": "Error",
+            "content": "Something went wrong",
+            "features": [],
         }
 
         try:
-            resp = requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=payload,
+            kb_result = search_in_knowledge_base(query)
+            logger.info(f"KB result: {kb_result}")
+
+            prompt = build_prompt(query, kb_result)
+            logger.info(f"Prompt: {prompt}")
+
+            api_response = client.models.generate_content(
+                model="gemini-2.5-flash", contents=prompt
             )
-            data = resp.json()
-            logger.info(f"OpenRouter raw response: {data}")
 
-            if "choices" in data:
-                content = data["choices"][0]["message"]["content"]
-
-                # 🔹 Strip code fences if present
-                match = re.search(r"\{.*\}", content, re.DOTALL)
-                if match:
-                    content = match.group(0)
-
-                try:
-                    parsed = json.loads(content)
-                    logger.info(f"Parsed JSON response: {parsed}")
-                    return parsed
-                except Exception as e:
-                    logger.error(f"JSON parse failed: {e}")
-                    return {
-                        "component_type": "card",
-                        "title": "Error",
-                        "content": f"Invalid JSON from LLM: {content}",
-                        "features": [],
-                    }
-
-            else:
-                error_msg = data.get("error", "Unknown error")
-                return {
-                    "component_type": "card",
-                    "title": "Error",
-                    "content": f"API error: {error_msg}",
-                    "features": [],
-                }
+            parsed = json.loads(api_response.text)
+            return parsed
 
         except Exception as e:
-            logger.exception("OpenRouter call failed")
-            return {
-                "component_type": "card",
-                "title": "Error",
-                "content": f"API call failed: {e}",
-                "features": [],
-            }
+            logger.exception(f"TutorAgent.run() failed: {e}")
+            response["content"] = str(e)
+            return response
 
 
-# Singleton instance
 ai_tutor_agent = TutorAgent()
