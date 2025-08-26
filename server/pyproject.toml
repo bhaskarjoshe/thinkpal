@@ -1,0 +1,35 @@
+[project]
+name = "ai-tutor"
+version = "0.1.0"
+description = "AI Tutor for CSE curriculum with Generative UX and LLM backend"
+authors = [
+    { name = "Bhaskar Chandra Joshi", email = "bhaskar.chandra@think41.com" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+
+dependencies = [
+    # Backend Framework
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.29.0",
+
+    # Database & Vector Store
+    "psycopg2-binary>=2.9.9",  # PostgreSQL
+    "sqlalchemy>=2.0.28",
+
+    # Auth
+    "pyjwt>=2.8.0",
+
+    # Utils
+    "pydantic>=2.6.3",
+    "httpx>=0.27.0",
+]
+
+[tool.uv]
+# uv-specific settings
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "black>=24.2.0",
+    "ruff>=0.3.0",
+]
