@@ -3,8 +3,8 @@ import os
 import re
 
 import requests
-from app.config.logger import logger
-from app.services.knowledge_base import search_in_knowledge_base
+from app.config.logger_config import logger
+from app.services.knowledge_base_service import search_in_knowledge_base
 from app.services.prompt import build_prompt
 from app.services.prompt import ui_schema
 from dotenv import load_dotenv

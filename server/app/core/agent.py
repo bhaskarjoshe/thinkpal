@@ -1,10 +1,9 @@
 import json
 import os
-import re
 import uuid
 
-from app.config.logger import logger
-from app.services.knowledge_base import search_in_knowledge_base
+from app.config.logger_config import logger
+from app.services.knowledge_base_service import search_in_knowledge_base
 from app.services.prompt import build_prompt
 from dotenv import load_dotenv
 from google import genai
@@ -21,7 +20,7 @@ class TutorAgent:
                 "GEMINI_API_KEY is missing! Please set it in your environment."
             )
 
-    def run(self, query: str, chat_id: str = None):
+    def run(self, query: str, chat_id: str):
         if not chat_id:
             chat_id = str(uuid.uuid4())
 

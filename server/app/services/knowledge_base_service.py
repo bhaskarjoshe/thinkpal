@@ -1,4 +1,4 @@
-from app.config.logger import logger
+from app.config.logger_config import logger
 
 
 def search_in_knowledge_base(query: str):

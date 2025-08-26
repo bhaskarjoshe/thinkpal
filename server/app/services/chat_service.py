@@ -1,15 +1,13 @@
 import uuid
 
-from app.config.logger import logger
+from app.config.logger_config import logger
 from app.core.agent import ai_tutor_agent
 from app.core.agent_open_router import fallback_ai_tutor_agent
-from app.models.chat import chat_sessions
 
 
 def handle_chat_request(chat_id: str, query: str):
     if not chat_id:
         chat_id = str(uuid.uuid4())
-        chat_sessions[chat_id] = []
         logger.info(f"New chat started with ID: {chat_id}")
 
     try:
