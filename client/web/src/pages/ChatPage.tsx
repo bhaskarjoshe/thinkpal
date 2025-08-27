@@ -2,25 +2,25 @@ import { GoLightBulb } from "react-icons/go";
 import Navbar from "../components/Navbar";
 import { IoCodeSharp, IoFlashOutline } from "react-icons/io5";
 import { RiChat1Line, RiRoadMapLine } from "react-icons/ri";
-import { LuFileQuestion } from "react-icons/lu";
+import { LuFileQuestion, LuSend } from "react-icons/lu";
 import { FaRegEye } from "react-icons/fa";
 import { useUserStore } from "../store/userStore";
 import { useEffect, useState } from "react";
+import ChatContainer from "../containers/ChatContainer";
 
 const ChatPage = () => {
   const { userData } = useUserStore();
-  const [quickTopics, setQuickTopics] = useState<string[]>([])
+  const [quickTopics, setQuickTopics] = useState<string[]>([]);
 
   useEffect(() => {
     if (userData) {
       const topics = [
         ...(userData.interests || []),
-        ...(userData.programming_languages || [])
-      ].slice(0,4);
+        ...(userData.programming_languages || []),
+      ].slice(0, 4);
       setQuickTopics(topics);
     }
   }, [userData]);
-
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -36,7 +36,7 @@ const ChatPage = () => {
               <GoLightBulb className="text-2xl text-blue-600" />
               Quick Topics
             </h2>
-            <ul >
+            <ul>
               {quickTopics.map((topic, idx) => (
                 <li
                   key={idx}
@@ -55,7 +55,7 @@ const ChatPage = () => {
               <IoFlashOutline className="text-2xl text-blue-600" />
               Learning Actions
             </h2>
-            <ul >
+            <ul>
               {/* Quiz Me */}
               <li className="cursor-pointer hover:bg-gray-100 p-3 rounded-lg flex gap-3 items-center transition">
                 <div className="p-3 rounded-xl bg-gradient-to-r from-teal-500 to-green-400 text-white transition-transform duration-300 hover:scale-110 shadow-md">
@@ -116,7 +116,7 @@ const ChatPage = () => {
               <RiChat1Line className="text-2xl text-blue-600" />
               Recent Chats
             </h2>
-            <ul >
+            <ul>
               <li className="cursor-pointer hover:bg-gray-100 p-2 px-4 rounded-lg flex flex-col ">
                 <span>Chat 1</span>
                 <span className="text-sm text-gray-500">Yesterday</span>
@@ -131,26 +131,23 @@ const ChatPage = () => {
 
         {/* Main Chat Section */}
         <main className="flex flex-col flex-1 bg-gray-50">
-          {/* Chat messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            <div className="bg-white p-4 rounded-lg shadow-sm w-fit">
-              Hello! I'm your AI Tutor. I'm here to help you learn and
-              understand any topic you're curious about. What would you like to
-              explore today?
-            </div>
+          {/* Chat container with constrained width */}
+          <div className="flex flex-col flex-1 mx-auto w-full max-w-4xl">
+            {/* Chat messages */}
+            <ChatContainer />
           </div>
 
-          {/* Input Bar */}
-          <div className="border-t border-gray-200 p-4 bg-white">
-            <div className="flex items-center gap-3">
+          {/* Input Bar with full width background */}
+          <div className="border-t border-gray-200 bg-white w-full p-4">
+            <div className="flex items-center gap-3 mx-auto w-full max-w-4xl">
               <input
                 type="text"
                 placeholder="Ask me anything about any subject..."
                 className="flex-1 border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button className="cursor-pointer px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-500 text-white rounded-xl hover:scale-105 transition-transform shadow-md">
-                Send
-              </button>
+              <div className="cursor-pointer h-10 px-4 bg-gradient-to-r from-pink-300 to-purple-400 text-white rounded-xl scale-105 hover:scale-100 transition-transform shadow-md flex items-center justify-center">
+                <LuSend className="h-5 w-5" />
+              </div>
             </div>
           </div>
         </main>

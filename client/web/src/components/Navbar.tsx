@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Button from "../ui/Button";
 import { TbBulb } from "react-icons/tb";
-import { GoPerson } from "react-icons/go";
+import { GoPerson, GoPlus } from "react-icons/go";
 import { BsChat } from "react-icons/bs";
 import { useChatAccess } from "../hooks/useChatAccess";
 
@@ -42,15 +42,26 @@ const Navbar = () => {
         {/* Right side */}
         <div className="flex items-center gap-6">
           {isChat && (
-            <Link
-              to="/profile"
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors"
-            >
-              <GoPerson size={22} />
-              <span className="hidden sm:inline">Profile</span>
-            </Link>
-          )}
+            <div className="flex gap-2">
+              {/* Profile button */}
+              <Link
+                to="/profile"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors"
+              >
+                <GoPerson size={22} />
+                <span className="hidden sm:inline">Profile</span>
+              </Link>
 
+              {/* New Chat button */}
+              <button
+                type="button"
+                className="border border-gray-200 flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <GoPlus size={22} />
+                <span className="hidden sm:inline">New Chat</span>
+              </button>
+            </div>
+          )}
           {isProfile && (
             <Link
               to="/chat"
