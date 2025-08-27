@@ -7,10 +7,10 @@ import ProfilePage from "./pages/ProfilePage";
 
 import LoginModal from "./components/LoginModal";
 import { useUIStore } from "./store/uiStore";
+import SignupModal from "./components/RegistrationModal";
 
 const App = () => {
-  const { showLoginModal } = useUIStore();
-
+  const { showLoginModal, showSignupModal } = useUIStore();
   return (
     <>
       <Routes>
@@ -20,6 +20,7 @@ const App = () => {
       </Routes>
 
       {showLoginModal && <LoginModal />}
+      {showSignupModal && <SignupModal />}
     </>
   );
 };

@@ -25,6 +25,10 @@ def signup_user(user_data: UserCreate, db: Session):
             name=user_data.name,
             email=user_data.email,
             password=hashed_pw,
+            semester=user_data.semester,
+            skills=user_data.skills,
+            interests=user_data.interests,
+            programming_languages=user_data.programming_languages,
         )
         db.add(new_user)
         db.commit()

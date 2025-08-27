@@ -30,6 +30,10 @@ export const signupApi = async (payload: {
   name: string;
   email: string;
   password: string;
+  semester: string;
+  skills: string[];
+  interests: string[];
+  programming_languages: string[];
 }) => {
     try {
         const response = await axios.post(`${API_BASE}/auth/signup`, payload);

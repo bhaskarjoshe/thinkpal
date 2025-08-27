@@ -9,6 +9,10 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    semester: int | None = None
+    skills: list[str] | None = None
+    interests: list[str] | None = None
+    programming_languages: list[str] | None = None
 
 
 class UserResponse(UserBase):
