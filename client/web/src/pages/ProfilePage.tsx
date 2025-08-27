@@ -2,25 +2,13 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useAuthStore } from "../store/authStore";
-import { getUserData } from "../api/user";
-import { useEffect, useState } from "react";
+
+import { useUserStore } from "../store/userStore";
 
 const ProfilePage = () => {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
-  const [userData, setUserData] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const data = await getUserData();
-        setUserData(data);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
-    fetchUserData();
-  }, []);
+  const {userData} = useUserStore()
 
   return (
     <div>

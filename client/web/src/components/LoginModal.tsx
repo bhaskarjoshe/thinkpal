@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { loginApi } from "../api/auth";
 import { useUIStore } from "../store/uiStore";
+import { useUserStore } from "../store/userStore";
 
 const LoginModal = () => {
   const { closeLoginModal, openSignupModal } = useUIStore();
+  const { fetchUser } = useUserStore();
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
 
@@ -29,6 +31,7 @@ const LoginModal = () => {
       const data = await loginApi(formData);
       login(data.token);
       navigate("/chat");
+      await fetchUser();
       closeLoginModal();
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid email or password");

@@ -11,9 +11,11 @@ import {
   interestOptions,
   languageOptions,
 } from "../utils/signUpOptions";
+import { useUserStore } from "../store/userStore";
 
 const SignupModal = () => {
   const { closeSignupModal, openLoginModal } = useUIStore();
+  const { fetchUser } = useUserStore();
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
 
@@ -70,6 +72,7 @@ const SignupModal = () => {
       };
       const data = await signupApi(payload);
       login(data.token);
+      await fetchUser();
       navigate("/chat");
       closeSignupModal();
     } catch (err: any) {
