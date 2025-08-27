@@ -11,10 +11,10 @@ export const LandingPage = () => {
       <Navbar />
 
       {/* Intro Section */}
-      <section className="flex-1 w-full max-w-7xl mx-auto p-8 text-center">
+      <section className="flex-1 w-full max-w-7xl mx-auto p-16 text-center">
         <div className="inline-block mb-4">
           <span className="inline-block bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-500">
-            🚀 Powered by Advanced AI
+            🚀 Learn Smartly with AI
           </span>
         </div>
 
@@ -22,7 +22,7 @@ export const LandingPage = () => {
           Your Personal AI Learning Companion
         </h1>
 
-        <p className="mt-6 text-lg sm:text-base max-w-3xl mx-auto text-gray-700">
+        <p className="mt-6 text-lg sm:text-base max-w-3xl mx-auto text-gray-600">
           Experience the future of education with our intelligent tutoring
           system. Get personalized help, interactive explanations, and adaptive
           learning paths.
@@ -30,10 +30,10 @@ export const LandingPage = () => {
 
         <div className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-6">
           <Link to="/chat">
-            <Button>Start Learning Now</Button>
+            <Button>Start Learning Now 🡪</Button>
           </Link>
           <Link to="/about">
-            <button className="px-6 py-3 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+            <button className="px-6 py-2.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-colors duration-200">
               Learn More
             </button>
           </Link>
@@ -47,8 +47,8 @@ export const LandingPage = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-8">
+      <section className="bg-gray-50 py-16 px-16">
+        <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
             Why Choose Our AI Tutor
           </h2>
@@ -57,7 +57,7 @@ export const LandingPage = () => {
       </section>
 
       {/* Outro Section */}
-      <section className="py-16 px-8 text-center">
+      <section className="py-16 px-16 text-center">
         <h2 className="text-4xl sm:text-3xl font-bold mb-4">
           Ready to Transform Your Learning?
         </h2>
@@ -66,7 +66,7 @@ export const LandingPage = () => {
           education with our AI-powered tutoring platform.
         </p>
         <Link to="/chat">
-          <Button>Start Your Learning Journey</Button>
+          <Button>Start Your Learning Journey 🡪</Button>
         </Link>
       </section>
 
