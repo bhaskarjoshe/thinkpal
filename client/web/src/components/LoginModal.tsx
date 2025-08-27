@@ -3,10 +3,7 @@ import { TbBulb } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { loginApi, signupApi } from "../api/auth";
-
-interface LoginModalProps {
-  onClose: () => void;
-}
+import { useUIStore } from "../store/uiStore";
 
 type FormData = {
   name?: string;
@@ -15,7 +12,8 @@ type FormData = {
   confirmPassword?: string;
 };
 
-const LoginModal = ({ onClose }: LoginModalProps) => {
+const LoginModal = () => {
+  const { closeLoginModal } = useUIStore();
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
 
@@ -41,13 +39,20 @@ const LoginModal = ({ onClose }: LoginModalProps) => {
 
     try {
       const data = isSignup
-        ? await signupApi({ name: formData.name!, email: formData.email, password: formData.password })
-        : await loginApi({ email: formData.email, password: formData.password });
+        ? await signupApi({
+            name: formData.name!,
+            email: formData.email,
+            password: formData.password,
+          })
+        : await loginApi({
+            email: formData.email,
+            password: formData.password,
+          });
 
       login(data.token);
 
-      navigate("/chat"); 
-      onClose();
+      navigate("/chat");
+      closeLoginModal();
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid email or password");
     } finally {
@@ -58,7 +63,7 @@ const LoginModal = ({ onClose }: LoginModalProps) => {
   return (
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 overflow-auto"
-      onClick={onClose}
+      onClick={closeLoginModal}
     >
       <div
         className="relative bg-white text-gray-800 rounded-2xl shadow-xl max-w-md w-full mx-4 p-6 sm:p-8"
@@ -67,7 +72,7 @@ const LoginModal = ({ onClose }: LoginModalProps) => {
         {/* Close Button */}
         <button
           className="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-          onClick={onClose}
+          onClick={closeLoginModal}
         >
           ✕
         </button>
@@ -122,14 +127,12 @@ const LoginModal = ({ onClose }: LoginModalProps) => {
           )}
 
           {/* Error message inside modal */}
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
+            className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
           >
             {loading ? "Please wait..." : isSignup ? "Sign Up" : "Login"}
           </button>
@@ -140,7 +143,15 @@ const LoginModal = ({ onClose }: LoginModalProps) => {
           {isSignup ? "Already have an account?" : "New here?"}{" "}
           <span
             className="underline cursor-pointer text-blue-600"
-            onClick={() => setIsSignup(!isSignup)}
+            onClick={() => {
+              setIsSignup(!isSignup);
+              setFormData({
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+              });
+            }}
           >
             {isSignup ? "Login" : "Sign up"}
           </span>

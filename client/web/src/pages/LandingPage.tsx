@@ -3,8 +3,10 @@ import Navbar from "../components/Navbar";
 import Button from "../ui/Button";
 import BenfiitsContainer from "../containers/BenfiitsContainer";
 import { Link } from "react-router-dom";
+import { useChatAccess } from "../hooks/useChatAccess";
 
 export const LandingPage = () => {
+  const requestChatAccess = useChatAccess();
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Navbar */}
@@ -29,9 +31,8 @@ export const LandingPage = () => {
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-6">
-          <Link to="/chat">
-            <Button>Start Learning Now 🡪</Button>
-          </Link>
+          <Button onClick={requestChatAccess}>Start Learning Now 🡪</Button>
+
           <Link to="/about">
             <button className="px-6 py-2.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-colors duration-200">
               Learn More
@@ -65,9 +66,7 @@ export const LandingPage = () => {
           Join thousands of students who are already accelerating their
           education with our AI-powered tutoring platform.
         </p>
-        <Link to="/chat">
-          <Button>Start Your Learning Journey 🡪</Button>
-        </Link>
+        <Button onClick={requestChatAccess}>Start Your Learning Journey 🡪</Button>
       </section>
 
       {/* Footer */}

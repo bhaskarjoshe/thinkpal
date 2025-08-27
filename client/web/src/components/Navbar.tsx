@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "../ui/Button";
 import { TbBulb } from "react-icons/tb";
-import { useAuthStore } from "../store/authStore";
-import LoginModal from "../components/LoginModal";
+
+import { useChatAccess } from "../hooks/useChatAccess";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const { isLoggedIn } = useAuthStore();
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const navigate = useNavigate();
+  const requestChatAccess = useChatAccess();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,18 +18,10 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleGetStarted = () => {
-    if (isLoggedIn) {
-      navigate("/chat");
-    } else {
-      setShowLoginModal(true);
-    }
-  };
-
   return (
-    <div>
+    <div className="sticky top-0 z-30">
       <nav
-        className={`flex justify-between items-center px-6 py-3 sticky top-0 z-30 transition-all duration-300 backdrop-blur-md border-b border-gray-200
+        className={`flex justify-between items-center px-6 py-3 transition-all duration-300 backdrop-blur-md border-b border-gray-200
         ${scrolled ? "bg-white/80 shadow-md px-20" : "bg-white/40"}`}
       >
         <Link
@@ -49,13 +39,9 @@ const Navbar = () => {
           >
             About
           </Link>
-          <Button onClick={handleGetStarted}>Get Started 🡪</Button>
+          <Button onClick={requestChatAccess}>Get Started 🡪</Button>
         </div>
       </nav>
-
-      {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
-      )}
     </div>
   );
 };
