@@ -90,7 +90,7 @@ const SignupModal = () => {
       >
         {/* Close button */}
         <button
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+          className="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-gray-600"
           onClick={closeSignupModal}
         >
           ✕
@@ -169,7 +169,7 @@ const SignupModal = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition"
+                className="cursor-pointer  w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition"
               >
                 Next →
               </button>
@@ -221,6 +221,13 @@ const SignupModal = () => {
                   }
                   className="w-full text-sm"
                   classNamePrefix="react-select"
+                  styles={{
+                    menuList: (base) => ({
+                      ...base,
+                      maxHeight: "150px",
+                      overflowY: "auto",
+                    }),
+                  }}
                 />
               </div>
 
@@ -245,6 +252,13 @@ const SignupModal = () => {
                   }
                   className="w-full text-sm"
                   classNamePrefix="react-select"
+                  styles={{
+                    menuList: (base) => ({
+                      ...base,
+                      maxHeight: "150px",
+                      overflowY: "auto",
+                    }),
+                  }}
                 />
               </div>
 
@@ -269,6 +283,13 @@ const SignupModal = () => {
                   }
                   className="w-full text-sm"
                   classNamePrefix="react-select"
+                  styles={{
+                    menuList: (base) => ({
+                      ...base,
+                      maxHeight: "150px",
+                      overflowY: "auto",
+                    }),
+                  }}
                 />
               </div>
 
@@ -280,7 +301,7 @@ const SignupModal = () => {
                 <button
                   type="button"
                   onClick={() => setStep("credentials")}
-                  className="w-1/2 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition"
+                  className="cursor-pointer w-1/2 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition"
                 >
                   ← Back
                 </button>
@@ -288,7 +309,7 @@ const SignupModal = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-1/2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
+                  className="cursor-pointer w-1/2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
                 >
                   {loading ? "Please wait..." : "Sign Up"}
                 </button>
