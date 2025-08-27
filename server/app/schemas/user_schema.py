@@ -21,9 +21,10 @@ class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserProfileResponse(BaseModel):
-    id: int
-    name: str
-    email: str
+class UserProfileResponse(UserResponse):
+    semester: int | None = None
+    skills: list[str] | None = None
+    interests: list[str] | None = None
+    programming_languages: list[str] | None = None
 
     model_config = ConfigDict(from_attributes=True)

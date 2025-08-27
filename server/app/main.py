@@ -1,7 +1,9 @@
 from app.config.db_config import Base
 from app.config.db_config import engine
+from app.config.openapi_config import custom_openapi
 from app.routes import auth_routes
 from app.routes import chat_routes
+from app.routes import user_routes
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,6 +13,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_routes.router, tags=["Auth"])
 app.include_router(chat_routes.router, tags=["Chat"])
+app.include_router(user_routes.router, tags=["User"])
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +22,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.openapi = lambda: custom_openapi(app)
 
 
 @app.get("/")
