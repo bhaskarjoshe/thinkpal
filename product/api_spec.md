@@ -1,5 +1,5 @@
 
-# 📘 AI Tutor API Specification
+# 📘 ThinkPal API Specification
 
 ## Table of Contents
 1. [Overview](#overview)  
@@ -17,7 +17,7 @@
 ---
 
 ## Overview
-The AI Tutor API provides endpoints to:
+The ThinkPal API provides endpoints to:
 - Answer student queries conversationally.
 - Generate interactive quizzes and coding exercises.
 - Deliver curated learning resources.

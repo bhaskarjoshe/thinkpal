@@ -1,4 +1,4 @@
-# Architecture Document for AI Tutor (CSE Curriculum)
+# Architecture Document for ThinkPal (CSE Curriculum)
 
 ## 1. Tech Stack (Open Source & Free-First Approach)
 

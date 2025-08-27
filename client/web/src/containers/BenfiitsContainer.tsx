@@ -9,7 +9,7 @@ const BenfiitsContainer = () => {
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h2 className="text-4xl sm:text-3xl max-sm:text-2xl font-bold mb-4">
-          Why Choose AI Tutor?
+          Why Choose ThinkPal?
         </h2>
         <p className="text-lg sm:text-base text-gray-700">
           Our platform combines cutting-edge AI technology with proven educational methods to deliver

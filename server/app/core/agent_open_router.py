@@ -31,13 +31,13 @@ class FallBackTutorAgent:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "http://localhost:3000",
-            "X-Title": "AI Tutor",
+            "X-Title": "ThinkPal",
         }
 
         payload = {
             "model": "mistralai/mistral-small-3.2-24b-instruct:free",
             "messages": [
-                {"role": "system", "content": "You are an AI Tutor."},
+                {"role": "system", "content": "You are an ThinkPal."},
                 {"role": "user", "content": prompt},
             ],
         }

@@ -1,8 +1,8 @@
 
-# Technical Specification – AI Tutor (CSE Curriculum Agent)
+# Technical Specification – ThinkPal (CSE Curriculum Agent)
 
 ## 1. Project Overview
-The AI Tutor is an intelligent agent designed to teach concepts across the Computer Science & Engineering (CSE) curriculum. It leverages open-source Large Language Models (LLMs), generative UI components, and an agentic reasoning loop to provide personalized learning, quizzes, and dynamic explanations. All components are built with free and open-source tools, ensuring accessibility and scalability.
+The ThinkPal is an intelligent agent designed to teach concepts across the Computer Science & Engineering (CSE) curriculum. It leverages open-source Large Language Models (LLMs), generative UI components, and an agentic reasoning loop to provide personalized learning, quizzes, and dynamic explanations. All components are built with free and open-source tools, ensuring accessibility and scalability.
 
 ---
 

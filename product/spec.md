@@ -1,8 +1,8 @@
-# 📘 Project Specification: AI Tutor for Computer Science & Engineering
+# 📘 Project Specification: ThinkPal for Computer Science & Engineering
 
 ## 1. Project Description
-The AI Tutor is an intelligent, interactive learning assistant designed to guide students through the full Computer Science & Engineering (CSE) curriculum. It combines conversational learning, personalized content delivery, dynamic assessments, and interactive user interfaces to create a modern, engaging educational experience.  
-Unlike traditional static learning platforms, the AI Tutor adapts to each learner’s pace, preferences, and performance through generative UI and continuous feedback loops.
+The ThinkPal is an intelligent, interactive learning assistant designed to guide students through the full Computer Science & Engineering (CSE) curriculum. It combines conversational learning, personalized content delivery, dynamic assessments, and interactive user interfaces to create a modern, engaging educational experience.  
+Unlike traditional static learning platforms, the ThinkPal adapts to each learner’s pace, preferences, and performance through generative UI and continuous feedback loops.
 
 ---
 

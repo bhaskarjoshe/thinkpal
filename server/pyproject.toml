@@ -1,7 +1,7 @@
 [project]
 name = "ai-tutor"
 version = "0.1.0"
-description = "AI Tutor for CSE curriculum with Generative UX and LLM backend"
+description = "ThinkPal for CSE curriculum with Generative UX and LLM backend"
 authors = [
     { name = "Bhaskar Chandra Joshi", email = "bhaskar.chandra@think41.com" }
 ]

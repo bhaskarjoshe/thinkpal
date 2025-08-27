@@ -41,7 +41,7 @@ export const LandingPage = () => {
 
         <img
           src="/ai-tutor.jpg"
-          alt="AI Tutor"
+          alt="ThinkPal"
           className="mx-auto mt-10 rounded-2xl w-full max-w-4xl shadow-xl"
         />
       </section>
@@ -50,7 +50,7 @@ export const LandingPage = () => {
       <section className="bg-gray-50 py-16 px-16">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
-            Why Choose Our AI Tutor
+            Why Choose Our ThinkPal
           </h2>
           <BenfiitsContainer />
         </div>

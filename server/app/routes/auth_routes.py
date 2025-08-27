@@ -12,7 +12,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/api/auth")
 
 
 @router.post("/signup", response_model=TokenResponse)

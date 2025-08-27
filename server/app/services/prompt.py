@@ -2,7 +2,7 @@ from app.config.logger_config import logger
 from app.schemas.ui_schema import ui_schema
 
 BASE_TUTOR_PROMPT = """
-You are an AI Tutor. Respond ONLY in JSON.
+You are an ThinkPal. Respond ONLY in JSON.
 
 JSON must strictly match this schema: {schema}
 
