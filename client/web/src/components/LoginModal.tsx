@@ -47,7 +47,7 @@ const LoginModal = () => {
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+          className="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-gray-600"
           onClick={closeLoginModal}
         >
           ✕
@@ -84,7 +84,7 @@ const LoginModal = () => {
           <button
             type="submit"
             disabled={loading}
-            className="my-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
+            className="cursor-pointer my-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
           >
             {loading ? "Please wait..." : "Login"}
           </button>
