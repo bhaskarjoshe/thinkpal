@@ -14,7 +14,7 @@ class RoadmapAgent:
         else:
             content = f"Prerequisites for {query}"
         return {
-            "component_type": "card",
+            "component_type": "roadmap",
             "title": "Learning Roadmap",
             "content": content,
             "features": ["roadmap", "learning", "CSE"],

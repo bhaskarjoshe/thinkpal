@@ -2,7 +2,6 @@ import json
 import os
 
 from app.agent.prompt import build_base_tutor_prompt
-from app.schemas import ui_schema
 from app.services.knowledge_base_service import search_in_knowledge_base
 from google import genai
 

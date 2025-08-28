@@ -31,7 +31,7 @@ class QuizAgent:
                 parsed_response = json.loads(api_response.text)
             except Exception:
                 parsed_response = {
-                    "component_type": "card",
+                    "component_type": "quiz",
                     "title": "Quiz",
                     "content": api_response.text,
                     "features": ["quiz", "practice", "CSE"],

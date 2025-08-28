@@ -21,7 +21,7 @@ class VisualLearningAgent:
                 ),
             )
             return {
-                "component_type": "card",
+                "component_type": "visual",
                 "title": "Visual Learning",
                 "content": response.text,
                 "features": ["visual", "diagram", "chart"],

@@ -22,7 +22,7 @@ class CodeAgent:
             )
             # Parse JSON output if returned as string
             return {
-                "component_type": "card",
+                "component_type": "code",
                 "title": "Code Result",
                 "content": response.text,
                 "features": ["code", "programming"],

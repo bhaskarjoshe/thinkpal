@@ -1,7 +1,9 @@
 export type UIComponent = {
-  component_type: "card" | "text" | "list";
+  component_type: "card" | "text" | "list" | "quiz" | "roadmap" | "code" | "image";
   title?: string;
   content?: string;
+  content_json?: any;
+  content_image?: string;
   features?: string[];
 };
 
