@@ -1,6 +1,5 @@
-
-from app.config.logger_config import logger
 from app.agent.orchestator_tutor_agent import ai_tutor_agent
+from app.config.logger_config import logger
 from app.core.agent_open_router import fallback_ai_tutor_agent
 
 

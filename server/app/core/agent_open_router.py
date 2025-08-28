@@ -62,6 +62,8 @@ class FallBackTutorAgent:
                 try:
                     parsed = json.loads(content)
                     logger.info(f"Parsed JSON response: {parsed}")
+                    if parsed.get("content_text"):
+                        parsed["content"] += " " + parsed["content_text"]
                     return parsed
                 except Exception as e:
                     logger.error(f"JSON parse failed: {e}")

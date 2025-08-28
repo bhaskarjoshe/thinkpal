@@ -27,11 +27,13 @@ const ChatContainer = ({ messages, loading }: ChatContainerProps) => {
               : "bg-gray-100 text-gray-800 self-start"
           }`}
         >
-          {msg.role === "ai" ? (
-            <AIComponentRenderer
-              component={JSON.parse(msg.content) as UIComponent}
-            />
-          ) : (
+          {msg.role === "ai" ? (() => {
+            const components = JSON.parse(msg.content);
+            const componentArray = Array.isArray(components)
+              ? (components as UIComponent[])
+              : ([components] as UIComponent[]);
+            return <AIComponentRenderer components={componentArray} />;
+          })() : (
             msg.content
           )}
         </div>

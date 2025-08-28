@@ -1,30 +1,32 @@
 from typing import List
+from typing import Optional
+from typing import Union
 
 from pydantic import BaseModel
 
 UI_Schema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "UI Component Schema",
-    "type": "object",
-    "properties": {
-        "component_type": {
-            "type": "string",
-            "enum": ["card", "quiz", "list"],
-            "description": "Type of UI component to display",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "component_type": {
+                "type": "string",
+                "enum": ["card", "quiz", "roadmap", "code", "image", "text"],
+                "description": "Type of UI component to display",
+            },
+            "title": {"type": "string"},
+            "content": {"type": "string"},
+            "content_text": {"type": ["string", "null"]},
+            "content_json": {"type": ["object", "array", "null"]},
+            "content_image": {"type": ["string", "null"]},
+            "features": {"type": "array", "items": {"type": "string"}},
+            "next_steps": {"type": "array", "items": {"type": "string"}},
         },
-        "title": {"type": "string", "description": "Title of the component"},
-        "content": {
-            "type": "string",
-            "description": "Main content or body of the component",
-        },
-        "features": {
-            "type": "array",
-            "description": "Optional list of features or tags",
-            "items": {"type": "string"},
-        },
+        "required": ["component_type", "title", "content", "features"],
+        "additionalProperties": False,
     },
-    "required": ["component_type", "title", "content"],
-    "additionalProperties": False,
 }
 
 
@@ -32,4 +34,8 @@ class UIComponent(BaseModel):
     component_type: str
     title: str
     content: str
+    content_text: Optional[str] = None
+    content_json: Optional[Union[dict, list]] = None
+    content_image: Optional[str] = None
     features: List[str] = []
+    next_steps: Optional[List[str]] = None

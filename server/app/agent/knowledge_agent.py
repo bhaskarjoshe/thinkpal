@@ -19,4 +19,15 @@ class KnowledgeAgent:
         api_response = client.models.generate_content(
             model="gemini-2.5-flash", contents=prompt
         )
-        return json.loads(api_response.text)
+        try:
+            response = json.loads(api_response.text)
+            if response.get("content_text"):
+                response["content"] += " " + response["content_text"]
+            return response
+        except json.JSONDecodeError:
+            return {
+                "component_type": "card",
+                "title": "Error",
+                "content": "The response from the AI model was not valid JSON.",
+                "features": [],
+            }
