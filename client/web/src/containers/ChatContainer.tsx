@@ -7,9 +7,10 @@ import { CardSkeleton } from "../ui/CardSkelton";
 interface ChatContainerProps {
   messages: ChatMessage[];
   loading: boolean;
+  setInputQuery: (query: string) => void;
 }
 
-const ChatContainer = ({ messages, loading }: ChatContainerProps) => {
+const ChatContainer = ({ messages, loading, setInputQuery }: ChatContainerProps) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const ChatContainer = ({ messages, loading }: ChatContainerProps) => {
             const componentArray = Array.isArray(components)
               ? (components as UIComponent[])
               : ([components] as UIComponent[]);
-            return <AIComponentRenderer components={componentArray} />;
+            return <AIComponentRenderer setInputQuery={setInputQuery} components={componentArray} />;
           })() : (
             msg.content
           )}

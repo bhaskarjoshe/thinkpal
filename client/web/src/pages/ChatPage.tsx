@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import Navbar from "../components/Navbar";
 import { chatApi } from "../api/chat";
 import ChatContainer from "../containers/ChatContainer";
-import type { ChatMessage, UIComponent } from "../types/types";
+import type { ChatMessage } from "../types/types";
 
 import { GoLightBulb } from "react-icons/go";
 import { IoCodeSharp, IoFlashOutline } from "react-icons/io5";
@@ -12,26 +12,16 @@ import { RiRoadMapLine } from "react-icons/ri";
 import { LuFileQuestion, LuSend } from "react-icons/lu";
 import { FaRegEye } from "react-icons/fa";
 import { useUserStore } from "../store/userStore";
+import { useChatStore } from "../store/chatStore";
 
 const ChatPage = () => {
   const { userData } = useUserStore();
   const [quickTopics, setQuickTopics] = useState<string[]>([]);
   const [chatMode, setChatMode] = useState<string>("normal");
-  const [chatId, setChatId] = useState<string>(uuidv4());
-  const [inputQuery, setInputQuery] = useState<string>("");
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: uuidv4(),
-      role: "ai",
-      content: JSON.stringify({
-        component_type: "text",
-        content:
-          "Hello! I am your AI Companion. Ask me anything to get started.",
-      }),
-    },
-  ]);
+  const { chatId, messages, addMessage, inputQuery, setInputQuery } = useChatStore();
 
   const [loading, setLoading] = useState<boolean>(false);
+
 
   useEffect(() => {
     if (userData) {
@@ -52,7 +42,7 @@ const ChatPage = () => {
       role: "user",
       content: inputQuery,
     };
-    setMessages((prev) => [...prev, userMessage]);
+    addMessage(userMessage);
     setInputQuery("");
     setLoading(true);
 
@@ -68,12 +58,12 @@ const ChatPage = () => {
         role: "ai",
         content: JSON.stringify(
           response.ui_component || {
-            component_type: "text",
+            component_type: "knowledge",
             content: "Sorry, no response.",
           }
         ),
       };
-      setMessages((prev) => [...prev, aiMessage]);
+      addMessage(aiMessage);
     } finally {
       setLoading(false);
     }
@@ -171,7 +161,11 @@ const ChatPage = () => {
         <main className="flex flex-col flex-1 bg-gray-50">
           {/* Chat container with padding */}
           <div className="flex flex-col flex-1 w-full max-w-5xl mx-auto px-4 md:px-8">
-            <ChatContainer messages={messages} loading={loading} />
+            <ChatContainer
+              messages={messages}
+              loading={loading}
+              setInputQuery={setInputQuery}
+            />
           </div>
 
           {/* Input Bar full width */}

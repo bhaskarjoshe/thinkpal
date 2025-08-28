@@ -22,7 +22,7 @@ UI_Schema = {
             "content_json": {"type": ["object", "array", "null"]},
             "content_image": {"type": ["string", "null"]},
             "features": {"type": "array", "items": {"type": "string"}},
-            "next_steps": {"type": "array", "items": {"type": "string"}},
+            "next_topics_to_learn": {"type": "array", "items": {"type": "string"}},
         },
         "required": ["component_type", "title", "content", "features"],
         "additionalProperties": False,
@@ -38,4 +38,4 @@ class UIComponent(BaseModel):
     content_json: Optional[Union[dict, list]] = None
     content_image: Optional[str] = None
     features: List[str] = []
-    next_steps: Optional[List[str]] = None
+    next_topics_to_learn: Optional[List[str]] = None

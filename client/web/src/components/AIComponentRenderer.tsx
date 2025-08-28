@@ -1,8 +1,11 @@
 import type { UIComponent } from "../types/types";
+import KnowledgeAgent from "./agents/KnowledgeAgent";
 
 export const AIComponentRenderer = ({
+  setInputQuery,
   components,
 }: {
+  setInputQuery: (query: string) => void;
   components: UIComponent[];
 }) => {
   if (!components || components.length === 0) {
@@ -25,11 +28,6 @@ export const AIComponentRenderer = ({
                 {component.content && (
                   <p className="text-gray-700 mb-2">{component.content}</p>
                 )}
-                {component.content_text && (
-                  <p className="text-gray-600 text-sm mb-2">
-                    {component.content_text}
-                  </p>
-                )}
                 {component.features && (
                   <ul className="list-disc list-inside text-gray-600">
                     {component.features.map((f, idx) => (
@@ -37,16 +35,23 @@ export const AIComponentRenderer = ({
                     ))}
                   </ul>
                 )}
-                {component.next_steps && component.next_steps.length > 0 && (
-                  <div className="mt-3">
-                    <h4 className="font-semibold text-sm">Next Steps:</h4>
-                    <ul className="list-disc list-inside text-gray-600">
-                      {component.next_steps.map((step, idx) => (
-                        <li key={idx}>{step}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {component.next_topics_to_learn &&
+                  component.next_topics_to_learn.length > 0 && (
+                    <div className="mt-3">
+                      <h4 className="font-semibold text-sm">Next Steps:</h4>
+                      <div className="text-gray-600">
+                        {component.next_topics_to_learn.map((step, idx) => (
+                          <button
+                            key={idx}
+                            className="border border-gray-300 px-3 py-1 rounded cursor-pointer hover:bg-gray-100"
+                            onClick={() => setInputQuery(step)}
+                          >
+                            {step}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </div>
             );
 
@@ -88,7 +93,9 @@ export const AIComponentRenderer = ({
                     <ol className="list-decimal list-inside text-gray-700">
                       {component.content_json.steps.map(
                         (step: string, idx: number) => (
-                          <li key={idx}>{step}</li>
+                          <li key={idx} onClick={() => setInputQuery(step)}>
+                            {step}
+                          </li>
                         )
                       )}
                     </ol>
@@ -138,16 +145,21 @@ export const AIComponentRenderer = ({
                 className="list-disc list-inside text-gray-700 animate-fadeIn"
               >
                 {component.features?.map((f, idx) => (
-                  <li key={idx}>{f}</li>
+                  <li key={idx} onClick={() => setInputQuery(f)}>
+                    {f}
+                  </li>
                 ))}
               </ul>
             );
 
           case "knowledge":
             return (
-              <p key={index} className="text-gray-800 animate-fadeIn">
-                {component.content}
-              </p>
+              <KnowledgeAgent
+                key={index}
+                component={component}
+                index={index}
+                setInputQuery={setInputQuery}
+              />
             );
 
           default:

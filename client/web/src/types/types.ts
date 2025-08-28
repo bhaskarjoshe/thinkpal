@@ -5,6 +5,7 @@ export type UIComponent = {
   content_json?: any;
   content_image?: string;
   features?: string[];
+  next_topics_to_learn?: string[];
 };
 
 export type ChatMessage = {
