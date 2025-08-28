@@ -8,7 +8,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
 
@@ -34,7 +34,7 @@ class ChatMessage(Base):
         UUID(as_uuid=True), ForeignKey("chat_sessions.id"), nullable=False
     )
     query = Column(Text, nullable=False)
-    response = Column(Text, nullable=False)
+    response = Column(JSONB, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     session = relationship("ChatSession", back_populates="messages")
