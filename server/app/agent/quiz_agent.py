@@ -1,8 +1,6 @@
-# app/agent/quiz_agent.py
 import json
 import os
 
-from app.agent.prompt import BASE_TUTOR_PROMPT
 from app.services.knowledge_base_service import search_in_knowledge_base
 from google import genai
 
@@ -11,31 +9,64 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 class QuizAgent:
     """
-    Generates quizzes (MCQs or fill-in-the-blank) using Gemini LLM with structured JSON.
+    Generates quizzes (MCQs, fill-in-the-blank, or exercises) using Gemini LLM with structured JSON.
     """
 
-    def run(self, query: str, chat_id: str = None):
+    def run(self, query: str, chat_history: list):
         try:
             kb_result = search_in_knowledge_base(query)
 
-            schema = "{'component_type': 'quiz', 'title': 'string', 'content': 'string', 'features': ['string']}"
-            prompt = BASE_TUTOR_PROMPT.format(
-                schema=schema, query=query, kb_result=kb_result
+            messages = []
+
+            messages.append(
+                {
+                    "role": "system",
+                    "parts": [
+                        "You are a Quiz Generator AI for Computer Science students. "
+                        "Always return JSON ONLY, never plain text. "
+                        "The JSON must follow this schema:\n"
+                        "{\n"
+                        '  "component_type": "quiz",\n'
+                        '  "title": "string",\n'
+                        '  "content": "string (main explanation)",\n'
+                        '  "content_json": {"questions": [{"question": "string", "options": ["A", "B", "C"], "answer": "A"}]},\n'
+                        '  "features": ["quiz", "practice", "CSE"]\n'
+                        "}\n\n"
+                        "Generate varied formats: MCQs, fill-in-the-blank, or coding exercises. "
+                        "Make questions contextual and educational."
+                    ],
+                }
             )
 
-            api_response = client.models.generate_content(
-                model="gemini-2.5-flash", contents=prompt
+            if kb_result:
+                messages.append(
+                    {
+                        "role": "system",
+                        "parts": [f"Knowledge Base Context: {kb_result}"],
+                    }
+                )
+
+            if chat_history:
+                for msg in chat_history:
+                    messages.append({"role": "user", "parts": [msg["query"]]})
+                    messages.append({"role": "model", "parts": [msg["response"]]})
+
+            messages.append({"role": "user", "parts": [query]})
+
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=messages,
             )
 
             try:
-                parsed_response = json.loads(api_response.text)
+                parsed_response = json.loads(response.text)
                 if parsed_response.get("content_text"):
                     parsed_response["content"] += " " + parsed_response["content_text"]
             except Exception:
                 parsed_response = {
                     "component_type": "quiz",
                     "title": "Quiz",
-                    "content": api_response.text,
+                    "content": response.text,
                     "features": ["quiz", "practice", "CSE"],
                 }
 

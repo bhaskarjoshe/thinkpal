@@ -51,13 +51,28 @@ tools = {
 }
 
 
-def build_base_tutor_prompt(query: str, kb_result: dict = None):
+def build_base_tutor_prompt(
+    query: str, kb_result: dict = None, chat_history: list = None
+):
     """
-    Build an extended behavioral prompt for LLM-driven response.
+    Build structured prompt for Gemini with system instructions + chat history.
     """
+    messages = []
 
-    prompt = BASE_TUTOR_PROMPT.format(query=query, kb_result=kb_result)
-    return prompt
+    messages.append(
+        {
+            "role": "system",
+            "parts": [BASE_TUTOR_PROMPT.format(query=query, kb_result=kb_result)],
+        }
+    )
+
+    if chat_history:
+        for msg in chat_history:
+            messages.append({"role": "user", "parts": [msg["query"]]})
+            messages.append({"role": "assistant", "parts": [msg["response"]]})
+    messages.append({"role": "user", "parts": [query]})
+
+    return messages
 
 
 def build_routing_prompt(query: str):

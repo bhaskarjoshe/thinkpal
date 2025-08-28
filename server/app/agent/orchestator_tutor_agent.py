@@ -23,10 +23,10 @@ class TutorAgent:
             "KnowledgeAgent": self.knowledge_agent,
         }
 
-    def run(self, query: str, chat_id: str = None):
+    def run(self, query: str, chat_history: list):
         try:
             agent_name = route_query_llm(query)
-            return self.agents[agent_name].run(query)
+            return self.agents[agent_name].run(query, chat_history)
         except Exception as e:
             logger.exception(f"TutorAgent.run() failed: {e}")
             return {

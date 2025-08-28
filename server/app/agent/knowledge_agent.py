@@ -1,8 +1,5 @@
-import json
 import os
 
-from app.agent.prompt import build_base_tutor_prompt
-from app.services.knowledge_base_service import search_in_knowledge_base
 from google import genai
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -10,24 +7,37 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 class KnowledgeAgent:
     """
-    Fallback agent using knowledge base + Gemini GenAI.
+    Provides factual knowledge responses from the model.
     """
 
-    def run(self, query: str):
-        kb_result = search_in_knowledge_base(query)
-        prompt = build_base_tutor_prompt(query, kb_result)
-        api_response = client.models.generate_content(
-            model="gemini-2.5-flash", contents=prompt
-        )
+    def __init__(self):
+        self.client = client
+
+    def run(self, query: str, chat_history: list):
         try:
-            response = json.loads(api_response.text)
-            if response.get("content_text"):
-                response["content"] += " " + response["content_text"]
-            return response
-        except json.JSONDecodeError:
+            contents = []
+            for msg in chat_history:
+                contents.append(
+                    {"role": msg["role"], "parts": [{"text": msg["content"]}]}
+                )
+
+            contents.append({"role": "user", "parts": [{"text": query}]})
+
+            api_response = self.client.models.generate_content(
+                model="gemini-2.5-flash", contents=contents
+            )
+
             return {
-                "component_type": "card",
-                "title": "Error",
-                "content": "The response from the AI model was not valid JSON.",
+                "component_type": "knowledge",
+                "title": "Knowledge Base",
+                "content": api_response.text,
+                "features": ["knowledge", "facts", "CSE"],
+            }
+
+        except Exception as e:
+            return {
+                "component_type": "error",
+                "title": "Knowledge Agent Error",
+                "content": str(e),
                 "features": [],
             }

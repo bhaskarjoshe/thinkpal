@@ -143,7 +143,7 @@ export const AIComponentRenderer = ({
               </ul>
             );
 
-          case "text":
+          case "knowledge":
             return (
               <p key={index} className="text-gray-800 animate-fadeIn">
                 {component.content}

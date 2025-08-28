@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import timezone
 from uuid import uuid4
 
+from app.config.logger_config import logger
 from app.models.chat_model import ChatMessage
 from app.models.chat_model import ChatSession
 from sqlalchemy.orm import Session
@@ -24,6 +25,7 @@ def create_chat_session(
     db.add(new_session)
     db.commit()
     db.refresh(new_session)
+    logger.info(f"{chat_id}: Chat Session Created for the chat.")
     return new_session
 
 
@@ -41,21 +43,8 @@ def save_message(
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
+    logger.info(f"{session_id}: Message saved to the chat history.")
     return new_message
-
-
-def init_chat(
-    db: Session,
-    chat_id: str,
-    user_id: int,
-    query: str,
-    response: str,
-    title: str = None,
-):
-    """Ensure chat session exists and store first message."""
-    session = create_chat_session(db, chat_id, user_id, title)
-    save_message(db, session.id, query, response)
-    return session
 
 
 def get_chat_session(db: Session, chat_id: str) -> ChatSession:
