@@ -8,7 +8,8 @@ from pydantic import BaseModel
 
 
 class ChatRequest(BaseModel):
-    chat_session_id: Optional[UUID] = None
+    chat_id: Optional[UUID] = None
+    chat_mode: str
     query: str
 
 
@@ -28,6 +29,6 @@ class ChatSessionResponse(BaseModel):
 
 class ChatResponse(BaseModel):
     status: str
-    chat_session_id: UUID
+    chat_id: UUID
     ui_component: UIComponent
     messages: Optional[List[ChatMessageResponse]] = None
