@@ -3,10 +3,10 @@ import os
 import re
 
 import requests
+from app.agent.prompt import build_base_tutor_prompt
 from app.config.logger_config import logger
+from app.schemas import ui_schema
 from app.services.knowledge_base_service import search_in_knowledge_base
-from app.services.prompt import build_prompt
-from app.services.prompt import ui_schema
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,7 +25,7 @@ class FallBackTutorAgent:
     def run(self, query: str):
         kb_result = search_in_knowledge_base(query)
 
-        prompt = build_prompt(query, kb_result)
+        prompt = build_base_tutor_prompt(query, kb_result)
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",

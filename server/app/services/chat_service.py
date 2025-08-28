@@ -1,6 +1,6 @@
 
 from app.config.logger_config import logger
-from app.core.agent import ai_tutor_agent
+from app.agent.orchestator_tutor_agent import ai_tutor_agent
 from app.core.agent_open_router import fallback_ai_tutor_agent
 
 
@@ -8,7 +8,7 @@ def handle_chat_request(chat_id: str, query: str):
 
     try:
         logger.info(f"{chat_id}: User Query: {query}")
-        raise Exception("Test Exception")
+        # raise Exception("Test Exception")
         response = ai_tutor_agent.run(query)
         logger.info(f"{chat_id}: LLM response: {response['content']}")
 

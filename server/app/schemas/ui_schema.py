@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-ui_schema = {
+UI_Schema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "UI Component Schema",
     "type": "object",
