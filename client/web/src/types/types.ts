@@ -22,7 +22,7 @@ export type UIComponent = {
     | "quiz"
     | "roadmap"
     | "code"
-    | "image"
+    | "visual"
     | "text";
   title: string;
   content: string;

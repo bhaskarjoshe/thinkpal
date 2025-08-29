@@ -43,7 +43,7 @@ const CodeAgent = ({ component, index }: CodeAgentProps) => {
       {example_usage && (
         <div>
           <strong className="text-white">Example Usage:</strong>
-          <div className="whitespace-pre-wrap bg-gray-800 text-green-300 p-3 rounded mt-1 overflow-auto max-h-60">
+          <div className="whitespace-pre-wrap bg-gray-800 text-green-300 p-3 rounded mt-1 overflow-auto">
             {example_usage}
           </div>
         </div>

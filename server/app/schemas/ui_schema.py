@@ -4,73 +4,29 @@ from typing import Union
 
 from pydantic import BaseModel
 
-UI_Schema = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "UI Component Schema",
-    "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "component_type": {
-                "type": "string",
-                "enum": ["card", "quiz", "roadmap", "code", "image", "text"],
-                "description": "Type of UI component to display",
-            },
-            "title": {"type": "string"},
-            "content": {"type": "string"},
-            "content_text": {"type": ["string", "null"]},
-            "content_json": {
-                "type": ["object", "array", "null"],
-                "properties": {
-                    # Quiz-specific structure
-                    "quiz_type": {
-                        "type": "string",
-                        "enum": ["mcq", "true_false", "fill_blank"],
-                        "description": "Type of quiz (multiple choice, true/false, fill in the blank)",
-                    },
-                    "questions": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "question": {"type": "string"},
-                                "options": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                },
-                                "answer": {"type": "string"},
-                            },
-                            "required": ["question", "answer"],
-                        },
-                    },
-                },
-                "required": ["quiz_type", "questions"],
-            },
-            "content_image": {"type": ["string", "null"]},
-            "features": {"type": "array", "items": {"type": "string"}},
-            "next_topics_to_learn": {"type": "array", "items": {"type": "string"}},
-            "brute_force_solution": {
-                "type": ["object", "null"],
-                "properties": {
-                    "code": {"type": "string"},
-                    "explanation": {"type": "string"},
-                },
-                "required": ["code", "explanation"],
-            },
-            "optimal_solution": {
-                "type": ["object", "null"],
-                "properties": {
-                    "code": {"type": "string"},
-                    "explanation": {"type": "string"},
-                },
-                "required": ["code", "explanation"],
-            },
-            "example_usage": {"type": ["string", "null"]},
-        },
-        "required": ["component_type", "title", "content", "features"],
-        "additionalProperties": False,
-    },
-}
+
+class Subtopic(BaseModel):
+    name: str
+    description: str
+    example: Optional[str] = None
+
+
+class Topic(BaseModel):
+    topic_name: str
+    brief: str
+    subtopics: List[Subtopic]
+    resources: List[str]
+    expected_outcome: str
+
+
+class Level(BaseModel):
+    level_name: str
+    description: str
+    topics: List[Topic]
+
+
+class RoadmapContent(BaseModel):
+    levels: List[Level]
 
 
 class CodeSolution(BaseModel):
@@ -83,11 +39,10 @@ class UIComponent(BaseModel):
     title: str
     content: str
     content_text: Optional[str] = None
-    content_json: Optional[Union[dict, list]] = None
+    content_json: Optional[Union[dict, RoadmapContent, list]] = None
     content_image: Optional[str] = None
     features: List[str] = []
     next_topics_to_learn: Optional[List[str]] = None
-
     brute_force_solution: Optional[CodeSolution] = None
     optimal_solution: Optional[CodeSolution] = None
     example_usage: Optional[str] = None

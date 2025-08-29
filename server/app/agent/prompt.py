@@ -79,7 +79,7 @@ def keyword_router(query: str) -> str:
     q = query.lower()
     if any(word in q for word in ["quiz", "mcq", "test", "exam", "practice", "question"]):
         return "QuizAgent"
-    if any(word in q for word in ["code", "program", "function", "python", "error", "debug"]):
+    if any(word in q for word in ["code", "program", "function", "error", "debug"]):
         return "CodeAgent"
     if any(word in q for word in ["diagram", "flowchart", "chart", "visual", "illustrate", "draw"]):
         return "VisualLearningAgent"
@@ -100,7 +100,7 @@ Available agents:
 
 Routing Rules:
 - If the query mentions "quiz", "test", "practice", "questions", "MCQ", "exam" → choose QuizAgent
-- If it mentions "code", "program", "debug", "python", "error", "function" → choose CodeAgent
+- If it mentions "code", "program", "debug", "error", "function" → choose CodeAgent
 - If it asks for "diagram", "flowchart", "chart", "visual" → choose VisualLearningAgent
 - If it asks for "roadmap", "plan", "steps", "learning path" → choose RoadmapAgent
 - Otherwise → choose KnowledgeAgent

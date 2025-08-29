@@ -4,7 +4,6 @@ import os
 from app.agent.prompt import build_routing_prompt
 from app.agent.prompt import tools
 from google import genai
-from app.config.logger_config import logger
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
