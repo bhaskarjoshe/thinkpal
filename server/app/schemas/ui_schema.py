@@ -22,6 +22,7 @@ UI_Schema = {
             "content_json": {
                 "type": ["object", "array", "null"],
                 "properties": {
+                    # Quiz-specific structure
                     "quiz_type": {
                         "type": "string",
                         "enum": ["mcq", "true_false", "fill_blank"],
@@ -48,6 +49,23 @@ UI_Schema = {
             "content_image": {"type": ["string", "null"]},
             "features": {"type": "array", "items": {"type": "string"}},
             "next_topics_to_learn": {"type": "array", "items": {"type": "string"}},
+            "brute_force_solution": {
+                "type": ["object", "null"],
+                "properties": {
+                    "code": {"type": "string"},
+                    "explanation": {"type": "string"},
+                },
+                "required": ["code", "explanation"],
+            },
+            "optimal_solution": {
+                "type": ["object", "null"],
+                "properties": {
+                    "code": {"type": "string"},
+                    "explanation": {"type": "string"},
+                },
+                "required": ["code", "explanation"],
+            },
+            "example_usage": {"type": ["string", "null"]},
         },
         "required": ["component_type", "title", "content", "features"],
         "additionalProperties": False,
@@ -55,8 +73,13 @@ UI_Schema = {
 }
 
 
+class CodeSolution(BaseModel):
+    code: str
+    explanation: str
+
+
 class UIComponent(BaseModel):
-    component_type: str
+    component_type: str  # "card", "quiz", "roadmap", "code", "image", "text"
     title: str
     content: str
     content_text: Optional[str] = None
@@ -64,3 +87,7 @@ class UIComponent(BaseModel):
     content_image: Optional[str] = None
     features: List[str] = []
     next_topics_to_learn: Optional[List[str]] = None
+
+    brute_force_solution: Optional[CodeSolution] = None
+    optimal_solution: Optional[CodeSolution] = None
+    example_usage: Optional[str] = None

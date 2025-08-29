@@ -1,4 +1,5 @@
 import type { UIComponent } from "../types/types";
+import CodeAgent from "./agents/CodeAgent";
 import KnowledgeAgent from "./agents/KnowledgeAgent";
 import QuizAgent from "./agents/QuizAgent";
 
@@ -85,19 +86,7 @@ export const AIComponentRenderer = ({
             );
 
           case "code":
-            return (
-              <div
-                key={index}
-                className="border rounded-lg p-4 shadow-md bg-gray-900 text-green-300 font-mono text-sm animate-fadeIn"
-              >
-                <h3 className="font-bold text-lg mb-2 text-white">
-                  {component.title}
-                </h3>
-                {component.content && (
-                  <pre className="whitespace-pre-wrap">{component.content}</pre>
-                )}
-              </div>
-            );
+            return <CodeAgent key={index} component={component} index={index} />;
 
           case "image":
             return (
