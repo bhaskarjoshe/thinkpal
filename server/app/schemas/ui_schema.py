@@ -19,7 +19,32 @@ UI_Schema = {
             "title": {"type": "string"},
             "content": {"type": "string"},
             "content_text": {"type": ["string", "null"]},
-            "content_json": {"type": ["object", "array", "null"]},
+            "content_json": {
+                "type": ["object", "array", "null"],
+                "properties": {
+                    "quiz_type": {
+                        "type": "string",
+                        "enum": ["mcq", "true_false", "fill_blank"],
+                        "description": "Type of quiz (multiple choice, true/false, fill in the blank)",
+                    },
+                    "questions": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "question": {"type": "string"},
+                                "options": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                },
+                                "answer": {"type": "string"},
+                            },
+                            "required": ["question", "answer"],
+                        },
+                    },
+                },
+                "required": ["quiz_type", "questions"],
+            },
             "content_image": {"type": ["string", "null"]},
             "features": {"type": "array", "items": {"type": "string"}},
             "next_topics_to_learn": {"type": "array", "items": {"type": "string"}},

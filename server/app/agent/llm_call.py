@@ -22,5 +22,4 @@ def route_query_llm(query: str) -> str:
     except Exception:
         agent_name = "KnowledgeAgent"
 
-    logger.info(f"Route query LLM: {agent_name}")
     return agent_name

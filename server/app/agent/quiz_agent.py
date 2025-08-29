@@ -16,46 +16,48 @@ class QuizAgent:
         try:
             kb_result = search_in_knowledge_base(query)
 
-            messages = []
+            prompt = """
+                You are QuizAgent. Always respond with a JSON object that follows this schema strictly:
 
-            messages.append(
                 {
-                    "role": "system",
-                    "parts": [
-                        "You are a Quiz Generator AI for Computer Science students. "
-                        "Always return JSON ONLY, never plain text. "
-                        "The JSON must follow this schema:\n"
-                        "{\n"
-                        '  "component_type": "quiz",\n'
-                        '  "title": "string",\n'
-                        '  "content": "string (main explanation)",\n'
-                        '  "content_json": {"questions": [{"question": "string", "options": ["A", "B", "C"], "answer": "A"}]},\n'
-                        '  "features": ["quiz", "practice", "CSE"]\n'
-                        "}\n\n"
-                        "Generate varied formats: MCQs, fill-in-the-blank, or coding exercises. "
-                        "Make questions contextual and educational."
-                    ],
+                "component_type": "quiz",
+                "title": "string (title of the quiz)",
+                "content": "string (intro/description of the quiz)",
+                "content_json": {
+                    "quiz_type": "mcq",  // or "true_false", "fill_blank"
+                    "questions": [
+                    {
+                        "question": "string",
+                        "options": ["string", "string", "string", "string"], // required for mcq
+                        "answer": "string"
+                    }
+                    ]
+                },
+                "features": ["quiz", "practice"],
+                "next_topics_to_learn": []
                 }
-            )
+
+                Rules:
+                - Generate exactly 5 questions by default unless user specifies otherwise.
+                - If quiz_type is "mcq", include 4 options per question.
+                - If "true_false", options should be ["True", "False"].
+                - If "fill_blank", no options, just the question and correct answer.
+                
+                MOST IMPORTANT- Return only valid JSON object. Do not include markdown code fences like json or .
+                """
 
             if kb_result:
-                messages.append(
-                    {
-                        "role": "system",
-                        "parts": [f"Knowledge Base Context: {kb_result}"],
-                    }
-                )
+                prompt += f"Knowledge Base Context: {kb_result}\n\n"
 
             if chat_history:
                 for msg in chat_history:
-                    messages.append({"role": "user", "parts": [msg["query"]]})
-                    messages.append({"role": "model", "parts": [msg["response"]]})
+                    prompt += f"User: {msg['query']}\nAssistant: {msg['response']}\n"
 
-            messages.append({"role": "user", "parts": [query]})
+            prompt += f"User: {query}\nAssistant:"
 
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
-                contents=messages,
+                contents=[prompt],
             )
 
             try:

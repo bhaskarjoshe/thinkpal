@@ -1,5 +1,6 @@
 import type { UIComponent } from "../types/types";
 import KnowledgeAgent from "./agents/KnowledgeAgent";
+import QuizAgent from "./agents/QuizAgent";
 
 export const AIComponentRenderer = ({
   setInputQuery,
@@ -11,7 +12,7 @@ export const AIComponentRenderer = ({
   if (!components || components.length === 0) {
     return <p className="text-gray-500">No results to display</p>;
   }
-
+  console.log("Components:", components)
   return (
     <div className="space-y-4">
       {components.map((component, index) => {
@@ -56,27 +57,7 @@ export const AIComponentRenderer = ({
             );
 
           case "quiz":
-            return (
-              <div
-                key={index}
-                className="border rounded-lg p-4 shadow-md bg-blue-50 animate-fadeIn"
-              >
-                <h3 className="font-bold text-lg mb-2">{component.title}</h3>
-                {component.content && (
-                  <p className="text-gray-700 mb-2">{component.content}</p>
-                )}
-                {component.content_json &&
-                  Array.isArray(component.content_json.questions) && (
-                    <ul className="list-decimal list-inside text-gray-700">
-                      {component.content_json.questions.map(
-                        (q: string, idx: number) => (
-                          <li key={idx}>{q}</li>
-                        )
-                      )}
-                    </ul>
-                  )}
-              </div>
-            );
+            return <QuizAgent component={component} index={index} />;
 
           case "roadmap":
             return (
