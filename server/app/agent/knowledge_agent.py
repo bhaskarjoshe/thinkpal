@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 from google import genai
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -17,37 +18,35 @@ class KnowledgeAgent:
 
     def run(self, query: str, chat_history: list):
         try:
-            # Convert chat history into Gemini format
-            contents = []
+            # Convert chat history into a continuous string for context
+            chat_history_text = ""
             for msg in chat_history:
-                contents.append(
-                    {"role": msg["role"], "parts": [{"text": msg["content"]}]}
-                )
+                role_text = "User: " if msg["role"] == "user" else "Assistant: "
+                chat_history_text += f"{role_text}{msg['content']}\n"
 
-            # Stronger system prompt to enforce JSON
+            # Strong system prompt to enforce JSON-only responses
             system_prompt = """
-            You are a knowledge agent. 
-            IMPORTANT: Always respond in **valid JSON only**. 
-            Do NOT include markdown, explanations, or extra text.
+You are a knowledge agent. 
+IMPORTANT: Always respond in **valid JSON only**. 
+Do NOT include markdown, explanations, or extra text.
 
-            The JSON must strictly follow this schema:
-            {
-              "component_type": "knowledge",
-              "title": "string",
-              "content": "string",
-              "features": ["string", "string", "string"],
-              "next_topics_to_learn": ["string", "string", "string"]
-            }
+The JSON must strictly follow this schema:
+{
+  "component_type": "knowledge",
+  "title": "string",
+  "content": "string",
+  "features": ["string", "string", "string"],
+  "next_topics_to_learn": ["string", "string", "string"]
+}
 
-            - "title": a short descriptive title of the answer
-            - "content": a concise, factual explanation for the query
-            - "features": exactly 3 relevant keywords
-            - "next_topics_to_learn": exactly 3 suggested follow-up topics
-            """
+- "title": a short descriptive title of the answer
+- "content": a concise, factual explanation for the query
+- "features": exactly 3 relevant keywords
+- "next_topics_to_learn": exactly 3 suggested follow-up topics
+"""
 
-            # Add system prompt + query
-            contents.append({"role": "user", "parts": [{"text": system_prompt}]})
-            contents.append({"role": "user", "parts": [{"text": query}]})
+            # Pass contents as strings only (no dicts!)
+            contents = [chat_history_text.strip(), system_prompt.strip(), query.strip()]
 
             # Call Gemini API
             api_response = self.client.models.generate_content(
@@ -63,14 +62,14 @@ class KnowledgeAgent:
                 if raw_text.lower().startswith("json"):
                     raw_text = raw_text[4:].strip()
 
-            # Try to parse JSON strictly
+            # Strict JSON parsing
             try:
                 parsed = json.loads(raw_text)
             except Exception:
                 parsed = {
                     "component_type": "knowledge",
                     "title": "Knowledge Base",
-                    "content": api_response.text,
+                    "content": raw_text,
                     "features": ["knowledge", "facts", "CSE"],
                     "next_topics_to_learn": [
                         "Advanced AI Concepts",

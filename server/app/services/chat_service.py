@@ -17,17 +17,18 @@ def handle_chat_request(chat_id: str, query: str, db: Session, user_id: int):
 
         chat_history_db = get_chat_history(db, chat_id)
         chat_history = serialize_chat_history(chat_history_db)
-
+        logger.debug(f"{chat_id}: Chat history: {chat_history}")
         response = ai_tutor_agent.run(query, chat_history)
         logger.info(f"{chat_id}: LLM response: {response['content']}")
-        save_message(db, chat_id, query, response)
+        save_message(db, chat_id, query, response["content"])
         if (
             response.get("component_type") == "card"
             and response.get("title") == "Error"
         ):
             logger.warning(f"{chat_id}: Primary agent failed, using fallback.")
             response = fallback_ai_tutor_agent.run(query)
-            logger.info(f"{chat_id}: Fallback LLM response: {response}")
+            logger.info(f"{chat_id}: Fallback LLM response: {response['content']}")
+            save_message(db, chat_id, query, response["content"])
 
         return chat_id, response
 
@@ -35,10 +36,12 @@ def handle_chat_request(chat_id: str, query: str, db: Session, user_id: int):
         logger.exception(f"{chat_id}: Error in chat request: {e}")
         try:
             response = fallback_ai_tutor_agent.run(query)
+            logger.info(f"{chat_id}: Fallback LLM response: {response['content']}")
             save_message(db, chat_id, query, response["content"])
             return chat_id, response
         except Exception as fallback_error:
             logger.exception(f"{chat_id}: Fallback also failed: {fallback_error}")
+            save_message(db, chat_id, query, str(fallback_error))
             return chat_id, {
                 "component_type": "card",
                 "title": "Error",
