@@ -60,9 +60,9 @@ const VisualAgent = ({ component, index }: VisualAgentProps) => {
         className="border rounded-lg p-4 shadow-md bg-yellow-50 animate-fadeIn"
       >
         <h3 className="font-bold text-lg mb-2">{component.title}</h3>
-        {component.content && (
+        {/* {component.content && (
           <p className="text-gray-700 mb-2">{component.content}</p>
-        )}
+        )} */}
 
         {component.content_image && (
           <img

@@ -1,7 +1,9 @@
+import json
 import os
 
 import requests
 from app.config.logger_config import logger
+from app.utils.json_cleaner import clean_json_text
 from google import genai
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -12,7 +14,8 @@ GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
 
 class VisualLearningAgent:
     """
-    Generates short textual explanations with a relevant image URL from Google.
+    Generates a concise textual explanation along with a relevant image URL from Google.
+    Handles chat history safely by summarizing context.
     """
 
     def fetch_image_url(self, query: str) -> str:
@@ -25,10 +28,11 @@ class VisualLearningAgent:
                 "q": query,
                 "searchType": "image",
                 "num": 1,
-                "safe": "off",  # optional for testing
+                "safe": "off",
             }
             response = requests.get(search_url, params=params)
             data = response.json()
+            logger.info(f"Google CSE Response: {data}")
             if "items" in data and len(data["items"]) > 0:
                 return data["items"][0]["link"]
             return ""
@@ -36,39 +40,55 @@ class VisualLearningAgent:
             logger.exception("Error fetching image:", e)
             return ""
 
+    def summarize_chat_history(self, chat_history: list) -> str:
+        """Create a concise summary from last few messages."""
+        if not chat_history:
+            return ""
+        # Use last user message as context
+        last_msgs = [
+            msg["content"] for msg in chat_history[-1:] if msg.get("role") == "user"
+        ]
+        return " ".join(last_msgs) if last_msgs else ""
+
     def run(self, query: str, chat_history: list):
         try:
-            # Minimal explanation from LLM
-            messages = [
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a Visual Learning Assistant. "
-                        "Provide a 1-2 sentence explanation of the topic. "
-                        "Do NOT create flowcharts or long text. "
-                        "Keep it concise and clear."
-                    ),
-                },
-            ]
-
-            # Add chat history as context
-            for msg in chat_history:
-                messages.append({"role": "user", "content": msg["query"]})
-                messages.append({"role": "assistant", "content": msg["response"]})
-
-            messages.append({"role": "user", "content": query})
-
-            # Ask LLM to generate short explanation
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=[m["content"] for m in messages],
+            # Prepare system prompt
+            system_prompt = (
+                "You are a Visual Learning Assistant. "
+                "For the user's query, provide ONLY a concise 1-2 sentence explanation suitable for displaying with an image. "
+                "Do NOT list items, create flowcharts, or include code examples. "
+                "Do NOT add extra commentary. "
+                "Return your response ONLY in this JSON format: "
+                '{"explanation": "<brief explanation>"}'
             )
 
-            explanation = response.text.strip() or "Explanation could not be generated."
+            # Prepare context from chat history
+            history_summary = self.summarize_chat_history(chat_history)
+            user_input = (
+                f"{history_summary} {query}".strip() if history_summary else query
+            )
+
+            # Generate minimal explanation using LLM
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=[system_prompt, user_input],
+            )
+            try:
+                cleaned_text = clean_json_text(response.text)
+                parsed = json.loads(cleaned_text)
+                explanation = parsed.get(
+                    "explanation", "Explanation could not be generated."
+                )
+            except Exception:
+                explanation = (
+                    response.text.strip() or "Explanation could not be generated."
+                )
 
             # Fetch relevant image from Google
+            search_query = f"{query} diagram"
+            image_url = self.fetch_image_url(search_query)
+
             logger.info(f"Query: {query}")
-            image_url = self.fetch_image_url(query)
             logger.info(f"Image URL: {image_url}")
 
             return {
@@ -80,6 +100,7 @@ class VisualLearningAgent:
             }
 
         except Exception as e:
+            logger.exception("Error in VisualLearningAgent run:", e)
             return {
                 "component_type": "card",
                 "title": "Error",
