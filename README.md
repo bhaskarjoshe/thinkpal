@@ -6,7 +6,7 @@ ThinkPal is an intelligent, interactive learning assistant designed to guide stu
 
 ## LOOM Video Demonstrations
 
-[ThinkPal AI Tutor Demo](https://www.loom.com/share/d8ded6def0c54999a3fce24a7a481ef8?sid=39f5e6ed-b973-43a4-b822-77125434d7ea)
+[https://www.loom.com/share/d8ded6def0c54999a3fce24a7a481ef8?sid=39f5e6ed-b973-43a4-b822-77125434d7ea](https://www.loom.com/share/d8ded6def0c54999a3fce24a7a481ef8?sid=39f5e6ed-b973-43a4-b822-77125434d7ea)
 
 ### 🎯 Key Features
 
