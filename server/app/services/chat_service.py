@@ -18,17 +18,37 @@ def handle_chat_request(chat_id: str, query: str, db: Session, user: User):
         logger.debug(f"{chat_id}: Chat history: {chat_history}")
 
         response = ai_tutor_agent.run(query, chat_history, user)
-        logger.info(f"{chat_id}: LLM response: {response['content']}")
-        save_message(db, chat_id, query, response["content"])
 
-        return chat_id, response
+        # Ensure ui_components is always a list
+        if isinstance(response, dict):
+            if "ui_components" in response:
+                ui_components = response["ui_components"]
+            else:
+                ui_components = [response]
+        elif isinstance(response, list):
+            ui_components = response
+        else:
+            raise ValueError("Invalid response format from agent")
+
+        # Log and save each component separately
+        for comp in ui_components:
+            logger.info(f"{chat_id}: LLM component response: {comp}")
+            content = comp.get("content", "")
+            logger.info(f"{chat_id}: LLM component content: {content}")
+            save_message(db, chat_id, query, content)
+
+        return chat_id, {"ui_components": ui_components}
 
     except Exception as e:
         logger.exception(f"{chat_id}: Error in chat request: {e}")
         save_message(db, chat_id, query, str(e))
         return chat_id, {
-            "component_type": "knowledge",
-            "title": "Error",
-            "content": str(e),
-            "features": [],
+            "ui_components": [
+                {
+                    "component_type": "knowledge",
+                    "title": "Error",
+                    "content": str(e),
+                    "features": [],
+                }
+            ]
         }

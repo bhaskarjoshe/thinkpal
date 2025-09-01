@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 from typing import Optional
+from typing import Union
 from uuid import UUID
 
 from app.schemas.ui_schema import UIComponent
@@ -30,5 +31,5 @@ class ChatSessionResponse(BaseModel):
 class ChatResponse(BaseModel):
     status: str
     chat_id: UUID
-    ui_component: UIComponent
+    ui_components: List[UIComponent]
     messages: Optional[List[ChatMessageResponse]] = None

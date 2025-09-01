@@ -1,3 +1,4 @@
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Union
@@ -35,13 +36,17 @@ class CodeSolution(BaseModel):
 
 
 class UIComponent(BaseModel):
-    component_type: str  # "knowledge", "quiz", "roadmap", "code", "image", "text"
+    component_type: (
+        str  # "knowledge", "quiz", "roadmap", "code", "image", "text", "multi-agent"
+    )
     title: str
-    content: str
+    # Allow single string or list of strings for multi-agent content
+    content: Union[str, List[str]]
     content_text: Optional[str] = None
-    content_json: Optional[Union[dict, RoadmapContent, list]] = None
+    content_json: Optional[Union[Dict, RoadmapContent, List[Dict]]] = None
     content_image: Optional[str] = None
-    features: List[str] = []
+    # Allow single list of strings or list of lists for multi-agent features
+    features: Union[List[str], List[List[str]]] = []
     next_topics_to_learn: Optional[List[str]] = None
     brute_force_solution: Optional[CodeSolution] = None
     optimal_solution: Optional[CodeSolution] = None

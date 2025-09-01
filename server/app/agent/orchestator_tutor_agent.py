@@ -10,6 +10,7 @@ from app.agent.roadmap_agent import RoadmapAgent
 from app.agent.visual_learning_agent import VisualLearningAgent
 from app.config.logger_config import logger
 from app.models.user_model import User
+from app.schemas.ui_schema import UIComponent
 from app.utils.history_cleaner import clean_chat_history
 from google import genai
 
@@ -54,11 +55,9 @@ class TutorAgent:
                 raise ValueError("Empty response")
             data = json.loads(raw_text)
             agents = data.get("agents", [])
-            logger.info(f"Selected agents: {agents}")
             if not isinstance(agents, list) or not agents:
                 agents = ["KnowledgeAgent"]
             agents = [a for a in agents if a in self.agents]
-            logger.info(f"Selected agents: {agents}")
             if not agents:
                 agents = ["KnowledgeAgent"]
         except Exception as e:
@@ -99,45 +98,45 @@ class TutorAgent:
     def run(self, query: str, chat_history: list, user: User):
         try:
             if query == "__INIT__":
-                return self.route_welcome_message(user)
+                # wrap single component in a list
+                return {"ui_components": [self.route_welcome_message(user)]}
 
             selected_agents = self.route_query_llm(query, chat_history)
             logger.info(f"Selected agents: {selected_agents}")
-            responses = []
+
+            ui_components = []
+
             for agent_name in selected_agents:
                 if agent_name in self.agents:
-                    logger.info(f"Selected {agent_name} for the query")
                     try:
                         resp = self.agents[agent_name].run(query, chat_history)
-                        responses.append(resp)
+                        logger.info(f"Response from {agent_name}: {resp}")
+                        # wrap each response as a UIComponent
+                        ui_components.append(resp)
                     except Exception as agent_error:
                         logger.exception(f"{agent_name} failed: {agent_error}")
-                        responses.append(
-                            {
-                                "component_type": "knowledge",
-                                "title": f"{agent_name} Error",
-                                "content": str(agent_error),
-                                "features": [],
-                            }
+                        ui_components.append(
+                            UIComponent(
+                                component_type="knowledge",
+                                title=f"{agent_name} Error",
+                                content=str(agent_error),
+                                features=[],
+                            )
                         )
 
-            if len(responses) == 1:
-                return responses[0]
-
-            return {
-                "component_type": "multi-agent",
-                "title": "Combined Response",
-                "content": [r["content"] for r in responses],
-                "features": [r.get("features", []) for r in responses],
-            }
+            return {"ui_components": ui_components}
 
         except Exception as e:
-            logger.exception(f"TutorAgent.run() failed: {e}")
+            logger.exception(f"Error in run(): {e}")
             return {
-                "component_type": "knowledge",
-                "title": "Error",
-                "content": str(e),
-                "features": [],
+                "ui_components": [
+                    UIComponent(
+                        component_type="knowledge",
+                        title="Error",
+                        content=str(e),
+                        features=[],
+                    )
+                ]
             }
 
 
