@@ -5,6 +5,7 @@ import { TbBulb } from "react-icons/tb";
 import { GoPerson, GoPlus } from "react-icons/go";
 import { BsChat } from "react-icons/bs";
 import { useChatAccess } from "../hooks/useChatAccess";
+import { useChatStore } from "../store/chatStore";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -19,6 +20,14 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNewChat = async () => {
+    const chatStore = useChatStore.getState();
+  
+    chatStore.setMessages([]);
+    chatStore.setInputQuery("");
+    await chatStore.startNewChat();
+  };
 
   return (
     <header className="sticky top-0 z-30 shadow-md">
@@ -58,7 +67,7 @@ const Navbar = () => {
                 className="border border-gray-200 flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <GoPlus size={22} />
-                <span className="hidden sm:inline">New Chat</span>
+                <span className="hidden sm:inline" onClick={handleNewChat}>New Chat</span>
               </button>
             </div>
           )}

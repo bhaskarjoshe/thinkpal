@@ -16,52 +16,76 @@ type ChatStore = {
   resetStore: () => void;
 };
 
-export const useChatStore = create<ChatStore>((set) => ({
-  chatId: null,
-  inputQuery: "",
-  messages: [],
-  loading: false,
+const CHAT_STORAGE_KEY = "chat_store";
 
-  setInputQuery: (query: string) => set({ inputQuery: query }),
-  setMessages: (messages: ChatMessage[]) => set({ messages }),
-  setLoading: (loading: boolean) => set({ loading }),
-  addMessage: (message: ChatMessage) =>
-    set((state) => ({ messages: [...state.messages, message] })),
+export const useChatStore = create<ChatStore>((set, get) => {
+  const persisted = typeof window !== "undefined" ? localStorage.getItem(CHAT_STORAGE_KEY) : null;
+  const initialState = persisted ? JSON.parse(persisted) : {};
 
-  startNewChat: async () => {
-    set({ loading: true });
-    try {
-      const data = await newChatApi();
-      set({
-        chatId: data.chat_id,
-        messages: [
-          {
-            id: crypto.randomUUID(),
-            role: "ai",
-            ui_components:
-              data.ui_components && data.ui_components.length > 0
-                ? data.ui_components
-                : [
-                    {
-                      component_type: "knowledge",
-                      title: "No Response",
-                      content: "Sorry, no response.",
-                      features: [],
-                    },
-                  ],
-          },
-        ],
-      });
-    } finally {
-      set({ loading: false });
+  const persist = () => {
+    if (typeof window !== "undefined") {
+      const state = get();
+      localStorage.setItem(
+        CHAT_STORAGE_KEY,
+        JSON.stringify({
+          chatId: state.chatId,
+          messages: state.messages,
+        })
+      );
     }
-  },
+  };
 
-  resetStore: () =>
-    set({
-      chatId: null,
-      inputQuery: "",
-      messages: [],
-      loading: false,
-    }),
-}));
+  return {
+    chatId: initialState.chatId || null,
+    inputQuery: "",
+    messages: initialState.messages || [],
+    loading: false,
+
+    setInputQuery: (query: string) => set({ inputQuery: query }),
+    setMessages: (messages: ChatMessage[]) => {
+      set({ messages });
+      persist();
+    },
+    setLoading: (loading: boolean) => set({ loading }),
+    addMessage: (message: ChatMessage) => {
+      set((state) => ({ messages: [...state.messages, message] }));
+      persist();
+    },
+
+    startNewChat: async () => {
+      set({ loading: true });
+      try {
+        const data = await newChatApi();
+        const initialMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: "ai",
+          ui_components:
+            data.ui_components && data.ui_components.length > 0
+              ? data.ui_components
+              : [
+                  {
+                    component_type: "knowledge",
+                    title: "No Response",
+                    content: "Sorry, no response.",
+                    features: [],
+                  },
+                ],
+        };
+        set({ chatId: data.chat_id, messages: [initialMessage] });
+        persist();
+      } finally {
+        set({ loading: false });
+      }
+    },
+
+    resetStore: () => {
+      set({
+        chatId: null,
+        inputQuery: "",
+        messages: [],
+        loading: false,
+      });
+      if (typeof window !== "undefined") localStorage.removeItem(CHAT_STORAGE_KEY);
+    },
+  };
+});

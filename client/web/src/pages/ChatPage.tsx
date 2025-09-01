@@ -82,7 +82,7 @@ const ChatPage = () => {
       <Navbar />
       <div className="flex flex-1 h-screen overflow-hidden">
         {/* Sidebar */}
-        <aside className="h-full w-100 border-r border-gray-200 flex flex-col gap-8 p-6 bg-white shadow-sm sticky top-0">
+        <aside className="w-100 border-r border-gray-200 flex flex-col gap-8 p-6 bg-white shadow-sm sticky top-0">
           {/* Quick Topics */}
           <div>
             <h2 className="text-lg font-bold mb-4 flex gap-2 items-center text-gray-800">
