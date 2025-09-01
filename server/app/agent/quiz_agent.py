@@ -3,6 +3,7 @@ import os
 
 from app.services.knowledge_base_service import search_in_knowledge_base
 from google import genai
+from prompts.quiz_agent_prompt import QUIZ_AGENT_PROMPT
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -16,36 +17,6 @@ class QuizAgent:
         try:
             # Fetch relevant knowledge base content
             kb_result = search_in_knowledge_base(query)
-
-            # Strong system prompt for structured JSON
-            system_prompt = """
-You are QuizAgent. Always respond with a JSON object that strictly follows this schema:
-
-{
-  "component_type": "quiz",
-  "title": "string (title of the quiz)",
-  "content": "string (intro/description of the quiz)",
-  "content_json": {
-    "quiz_type": "mcq",
-    "questions": [
-      {
-        "question": "string",
-        "options": ["string", "string", "string", "string"],
-        "answer": "string"
-      }
-    ]
-  },
-  "features": ["quiz", "practice"],
-  "next_topics_to_learn": []
-}
-
-Rules:
-- Generate exactly 5 questions unless specified otherwise.
-- If quiz_type is "mcq", include 4 options per question.
-- If "true_false", options should be ["True", "False"].
-- If "fill_blank", no options, just the question and answer.
-- Return only valid JSON. Do not include markdown fences or extra text.
-"""
 
             # Convert chat history into Gemini-friendly format
             chat_history_text = ""
@@ -62,7 +33,7 @@ Rules:
             contents = [
                 kb_context.strip(),
                 chat_history_text.strip(),
-                system_prompt.strip(),
+                QUIZ_AGENT_PROMPT.strip(),
                 f"User Query: {query}",
             ]
 

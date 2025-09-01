@@ -13,7 +13,6 @@ const KnowledgeAgent = ({
   const { chatId, addMessage } = useChatStore();
   const handleClick = async (query: string) => {
     try {
-      console.log(component);
       const userMessage: ChatMessage = {
         id: uuidv4(),
         role: "user",
@@ -25,7 +24,6 @@ const KnowledgeAgent = ({
         chat_mode: "normal",
         query: query,
       });
-      console.log(response);
       const aiMessage: ChatMessage = {
         id: uuidv4(),
         role: "ai",

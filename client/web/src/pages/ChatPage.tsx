@@ -29,7 +29,6 @@ const ChatPage = () => {
   } = useChatStore();
 
   useEffect(() => {
-    console.log("Chat page loaded");
     (async () => {
       await startNewChat();
     })();

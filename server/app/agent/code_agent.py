@@ -4,6 +4,8 @@ import os
 from google import genai
 from google.genai import types
 
+from prompts.code_agent_prompt import CODE_AGENT_SYSTEM_PROMPT
+
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
@@ -15,44 +17,14 @@ class CodeAgent:
 
     def run(self, query: str, chat_history: list):
         try:
-            # Convert chat history into Gemini-friendly format
             chat_history_text = ""
             for msg in chat_history:
                 role_text = "User: " if msg["role"] == "user" else "Assistant: "
                 chat_history_text += f"{role_text}{msg['content']}\n"
 
-            # Strong system prompt with structured fields for code
-            system_prompt = """
-You are CodeAgent. Generate a JSON object strictly following this schema:
-
-{
-  "component_type": "code",
-  "title": "string (short description of the problem)",
-  "content": "string (brief summary of the problem)",
-  "brute_force_solution": {
-    "code": "string (actual code for brute-force approach, must compile)",
-    "explanation": "string (explanation of the brute-force approach)"
-  },
-  "optimal_solution": {
-    "code": "string (actual code for optimal approach, must compile)",
-    "explanation": "string (explanation of the optimal approach)"
-  },
-  "example_usage": "string (demonstration of how to run the code with input/output)",
-  "features": ["code", "programming", "algorithm"]
-}
-
-Rules:
-1. Provide **both brute-force and optimal solutions**, clearly separated.
-2. Include **code in each solution**, never omit it.
-3. Include **explanations** for each solution.
-4. Include **an example usage**.
-5. Return only valid JSON, **do not include markdown fences** or extra text.
-6. Use triple quotes for multi-line code if needed within JSON strings.
-"""
-
             contents = [
                 chat_history_text.strip(),
-                system_prompt.strip(),
+                CODE_AGENT_SYSTEM_PROMPT.strip(),
                 f"User Query: {query}",
             ]
 

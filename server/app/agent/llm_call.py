@@ -1,8 +1,8 @@
 import json
 import os
 
-from app.agent.prompt import build_routing_prompt
-from app.agent.prompt import tools
+from app.agent.prompts.orchestrator_agent_prompt import build_routing_prompt
+from app.agent.prompts.orchestrator_agent_prompt import tools
 from google import genai
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))

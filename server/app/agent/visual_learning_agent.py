@@ -1,10 +1,11 @@
 import json
 import os
-
 import requests
+
 from app.config.logger_config import logger
 from app.utils.json_cleaner import clean_json_text
 from google import genai
+from prompts.visual_agent_prompt import VISUAL_AGENT_PROMPT
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -44,7 +45,6 @@ class VisualLearningAgent:
         """Create a concise summary from last few messages."""
         if not chat_history:
             return ""
-        # Use last user message as context
         last_msgs = [
             msg["content"] for msg in chat_history[-1:] if msg.get("role") == "user"
         ]
@@ -52,16 +52,6 @@ class VisualLearningAgent:
 
     def run(self, query: str, chat_history: list):
         try:
-            # Prepare system prompt
-            system_prompt = (
-                "You are a Visual Learning Assistant. "
-                "For the user's query, provide ONLY a concise 1-2 sentence explanation suitable for displaying with an image. "
-                "Do NOT list items, create flowcharts, or include code examples. "
-                "Do NOT add extra commentary. "
-                "Return your response ONLY in this JSON format: "
-                '{"explanation": "<brief explanation>"}'
-            )
-
             # Prepare context from chat history
             history_summary = self.summarize_chat_history(chat_history)
             user_input = (
@@ -71,7 +61,7 @@ class VisualLearningAgent:
             # Generate minimal explanation using LLM
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
-                contents=[system_prompt, user_input],
+                contents=[VISUAL_AGENT_PROMPT, user_input],
             )
             try:
                 cleaned_text = clean_json_text(response.text)

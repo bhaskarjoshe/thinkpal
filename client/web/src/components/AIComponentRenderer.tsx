@@ -15,7 +15,6 @@ export const AIComponentRenderer = ({
   if (!components || components.length === 0) {
     return <p className="text-gray-500">No results to display</p>;
   }
-  console.log("Components:", components);
   return (
     <div className="space-y-4">
       {components.map((component, index) => {

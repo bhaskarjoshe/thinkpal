@@ -4,6 +4,7 @@ from typing import List
 
 from app.schemas.ui_schema import UIComponent
 from google import genai
+from prompts.roadmap_agent_prompt import ROADMAP_AGENT_PROMPT  # import the prompt
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -16,15 +17,7 @@ class RoadmapAgent:
 
     def run(self, query: str, chat_history: List[dict]):
         try:
-            # Flatten system instructions and history
-            system_prompt = (
-                "You are a Roadmap Assistant. Respond strictly in JSON format. "
-                "Generate a roadmap with Beginner, Intermediate, Advanced levels. "
-                "Include topics, subtopics, resources, examples, and expected outcomes. "
-                "Return only valid JSON."
-            )
-
-            messages: List[str] = [system_prompt]
+            messages: List[str] = [ROADMAP_AGENT_PROMPT]
             for msg in chat_history:
                 messages.append(f"User: {msg['content']}")
             messages.append(f"User: {query}")
