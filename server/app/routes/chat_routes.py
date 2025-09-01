@@ -39,12 +39,13 @@ def new_chat(
     current_user=Depends(get_current_user),
 ):
     chat_id = uuid.uuid4()
+
+    chat_id, ui_response = handle_chat_request(
+        str(chat_id), "__INIT__", db, current_user.id
+    )
+
     return ChatResponse(
         status="success",
         chat_id=chat_id,
-        ui_component=UIComponent(
-            component_type="knowledge",
-            title="Welcome",
-            content="Hello! I am your AI Companion. Ask me anything to get started.",
-        ),
+        ui_component=UIComponent(**ui_response),
     )

@@ -1,8 +1,8 @@
 import json
 import os
 
+from app.agent.prompts.knowledge_agent_prompt import KNOWLEDGE_AGENT_SYSTEM_PROMPT
 from google import genai
-from prompts.knowledge_agent_prompt import KNOWLEDGE_AGENT_SYSTEM_PROMPT
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 

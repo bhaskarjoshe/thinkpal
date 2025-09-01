@@ -4,7 +4,7 @@ from typing import List
 
 from app.schemas.ui_schema import UIComponent
 from google import genai
-from prompts.roadmap_agent_prompt import ROADMAP_AGENT_PROMPT  # import the prompt
+from app.agent.prompts.roadmap_agent_prompt import ROADMAP_AGENT_PROMPT
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -66,5 +66,5 @@ class RoadmapAgent:
 
         except Exception as e:
             return UIComponent(
-                component_type="card", title="Error", content=str(e), features=[]
+                component_type="knowledge", title="Error", content=str(e), features=[]
             )

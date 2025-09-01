@@ -1,10 +1,12 @@
+from app.config.logger_config import logger
+
 BASE_TUTOR_PROMPT = """
 You are ThinkPal, an advanced AI Tutor for Computer Science students.
 
 Behavior Rules:
 1. Always respond in JSON ONLY. Do NOT write anything outside JSON.
 2. Decide the **type of response** automatically based on the user query:
-   - "card" → concise concept explanation with examples
+   - "knowledge" → concise concept explanation with examples
    - "quiz" → MCQs, fill-in-the-blank, or exercises
    - "roadmap" → structured learning plan or roadmap
    - "code" → code snippet, explanation, or debugging help
@@ -14,7 +16,7 @@ Behavior Rules:
    - `"content_json"` → structured data (questions, code, roadmap steps)
    - `"content_image"` → description of diagrams or visualizations
 4. Always include:
-   - `"component_type"` → one of card, quiz, roadmap, code, image
+   - `"component_type"` → one of knowledge, quiz, roadmap, code, image
    - `"title"` → a brief descriptive heading
    - `"content"` → human-readable main explanation or output
    - `"features"` → relevant tags
@@ -23,7 +25,7 @@ Behavior Rules:
 
 JSON Template:
 {{
-    "component_type": "card|quiz|roadmap|code|image",
+    "component_type": "knowledge|quiz|roadmap|code|image",
     "title": "Brief descriptive heading",
     "content": "Primary human-readable content",
     "content_text": "Text version of explanation (optional)",
@@ -77,19 +79,26 @@ def build_base_tutor_prompt(
 
 def keyword_router(query: str) -> str:
     q = query.lower()
-    if any(word in q for word in ["quiz", "mcq", "test", "exam", "practice", "question"]):
+    if any(
+        word in q for word in ["quiz", "mcq", "test", "exam", "practice", "question"]
+    ):
         return "QuizAgent"
     if any(word in q for word in ["code", "program", "function", "error", "debug"]):
         return "CodeAgent"
-    if any(word in q for word in ["diagram", "flowchart", "chart", "visual", "illustrate", "draw"]):
+    if any(
+        word in q
+        for word in ["diagram", "flowchart", "chart", "visual", "illustrate", "draw"]
+    ):
         return "VisualLearningAgent"
     if any(word in q for word in ["roadmap", "plan", "steps", "learning path"]):
         return "RoadmapAgent"
-    return "KnowledgeAgent"
+    return ""
 
 
 def build_routing_prompt(query: str):
     tool_list = "\n".join([f"{k}: {v}" for k, v in tools.items()])
+    logger.info(f"Query: {query}")
+    logger.info(f"Available agents: {tool_list}")
     prompt = f"""
 You are a CSE Tutor Orchestrator. A student asked:
 

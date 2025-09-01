@@ -4,7 +4,7 @@ import os
 from google import genai
 from google.genai import types
 
-from prompts.code_agent_prompt import CODE_AGENT_SYSTEM_PROMPT
+from app.agent.prompts.code_agent_prompt import CODE_AGENT_SYSTEM_PROMPT
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -70,7 +70,7 @@ class CodeAgent:
 
         except Exception as e:
             return {
-                "component_type": "card",
+                "component_type": "knowledge",
                 "title": "Error",
                 "content": str(e),
                 "features": [],

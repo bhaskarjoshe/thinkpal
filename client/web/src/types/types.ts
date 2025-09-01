@@ -16,8 +16,7 @@ export type QuizContent = {
 
 export type UIComponent = {
   component_type:
-    | "card"
-    | "knowledge"
+    "knowledge"
     | "list"
     | "quiz"
     | "roadmap"

@@ -1,11 +1,11 @@
 import json
 import os
-import requests
 
+import requests
+from app.agent.prompts.visual_agent_prompt import VISUAL_AGENT_PROMPT
 from app.config.logger_config import logger
 from app.utils.json_cleaner import clean_json_text
 from google import genai
-from prompts.visual_agent_prompt import VISUAL_AGENT_PROMPT
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -92,7 +92,7 @@ class VisualLearningAgent:
         except Exception as e:
             logger.exception("Error in VisualLearningAgent run:", e)
             return {
-                "component_type": "card",
+                "component_type": "knowledge",
                 "title": "Error",
                 "content": str(e),
                 "features": [],

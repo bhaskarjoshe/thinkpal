@@ -3,7 +3,7 @@ import os
 
 from app.services.knowledge_base_service import search_in_knowledge_base
 from google import genai
-from prompts.quiz_agent_prompt import QUIZ_AGENT_PROMPT
+from app.agent.prompts.quiz_agent_prompt import QUIZ_AGENT_PROMPT
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -79,7 +79,7 @@ class QuizAgent:
         except Exception as e:
             # Full error fallback
             return {
-                "component_type": "card",
+                "component_type": "knowledge",
                 "title": "Error",
                 "content": str(e),
                 "features": [],

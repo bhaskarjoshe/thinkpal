@@ -35,7 +35,7 @@ class CodeSolution(BaseModel):
 
 
 class UIComponent(BaseModel):
-    component_type: str  # "card", "quiz", "roadmap", "code", "image", "text"
+    component_type: str  # "knowledge", "quiz", "roadmap", "code", "image", "text"
     title: str
     content: str
     content_text: Optional[str] = None
