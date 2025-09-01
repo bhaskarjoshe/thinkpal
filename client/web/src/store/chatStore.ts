@@ -13,6 +13,7 @@ type ChatStore = {
   setLoading: (loading: boolean) => void;
   addMessage: (message: ChatMessage) => void;
   startNewChat: () => Promise<void>;
+  resetStore: () => void;
 };
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -45,4 +46,12 @@ export const useChatStore = create<ChatStore>((set) => ({
       set({ loading: false });
     }
   },
+
+  resetStore: () =>
+    set({
+      chatId: null,
+      inputQuery: "",
+      messages: [],
+      loading: false,
+    }),
 }));

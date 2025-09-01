@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 def handle_chat_request(chat_id: str, query: str, db: Session, user: User):
     try:
         logger.info(f"{chat_id}: User Query: {query}")
-        create_chat_session(db, chat_id, user_id=user, title=query)
+        create_chat_session(db, chat_id, user_id=user.id, title=query)
 
         chat_history_db = get_chat_history(db, chat_id)
         chat_history = serialize_chat_history(chat_history_db)

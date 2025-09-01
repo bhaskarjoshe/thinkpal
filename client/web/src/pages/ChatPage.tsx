@@ -23,16 +23,9 @@ const ChatPage = () => {
     addMessage,
     inputQuery,
     setInputQuery,
-    startNewChat,
     loading,
     setLoading,
   } = useChatStore();
-
-  useEffect(() => {
-    (async () => {
-      await startNewChat();
-    })();
-  }, [startNewChat]);
 
   useEffect(() => {
     if (userData) {

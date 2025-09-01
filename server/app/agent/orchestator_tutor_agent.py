@@ -3,14 +3,14 @@ import os
 
 from app.agent.code_agent import CodeAgent
 from app.agent.knowledge_agent import KnowledgeAgent
-from app.agent.prompts.orchestrator_agent_prompt import build_routing_prompt
-from app.agent.prompts.orchestrator_agent_prompt import keyword_router
+from app.agent.prompts.orchestrator_agent_prompt import ROUTING_PROMPT
 from app.agent.prompts.welcome_prompt import WELCOME_PROMPT
 from app.agent.quiz_agent import QuizAgent
 from app.agent.roadmap_agent import RoadmapAgent
 from app.agent.visual_learning_agent import VisualLearningAgent
 from app.config.logger_config import logger
 from app.models.user_model import User
+from app.utils.history_cleaner import clean_chat_history
 from google import genai
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -32,19 +32,40 @@ class TutorAgent:
             "KnowledgeAgent": self.knowledge_agent,
         }
 
-    def route_query_llm(self, query: str) -> str:
-        prompt = build_routing_prompt(query)
-        api_response = client.models.generate_content(
-            model="gemini-2.5-flash", contents=prompt
+    def route_query_llm(self, query: str, chat_history: list) -> list:
+        """Call routing LLM once to decide which agent(s) should handle the query."""
+        clean_history = clean_chat_history(chat_history)
+        history_text = "\n".join(
+            [f"{m['role'].capitalize()}: {m['content']}" for m in clean_history]
         )
+
+        prompt = ROUTING_PROMPT.format(query=query, chat_history=history_text)
         try:
-            data = json.loads(api_response.text)
-            agent_name = data.get("agent", "KnowledgeAgent").strip()
-            if agent_name not in self.agents:
-                agent_name = "KnowledgeAgent"
-        except Exception:
-            agent_name = "KnowledgeAgent"
-        return agent_name
+            api_response = client.models.generate_content(
+                model="gemini-2.5-flash", contents=prompt
+            )
+            raw_text = api_response.candidates[0].content.parts[0].text.strip()
+
+            if raw_text.startswith("```"):
+                raw_text = raw_text.strip("`")
+                if raw_text.lower().startswith("json"):
+                    raw_text = raw_text[4:].strip()
+            if not raw_text.strip():
+                raise ValueError("Empty response")
+            data = json.loads(raw_text)
+            agents = data.get("agents", [])
+            logger.info(f"Selected agents: {agents}")
+            if not isinstance(agents, list) or not agents:
+                agents = ["KnowledgeAgent"]
+            agents = [a for a in agents if a in self.agents]
+            logger.info(f"Selected agents: {agents}")
+            if not agents:
+                agents = ["KnowledgeAgent"]
+        except Exception as e:
+            logger.warning(f"Routing LLM failed: {e}")
+            agents = ["KnowledgeAgent"]
+
+        return agents
 
     def route_welcome_message(self, user: User):
         try:
@@ -70,7 +91,7 @@ class TutorAgent:
             logger.exception(f"Failed to build welcome message: {e}")
             return {
                 "component_type": "knowledge",
-                "title": f"Welcome, {self.user.name} 👋",
+                "title": "Welcome 👋",
                 "content": "Hello! Welcome to ThinkPal. What would you like to learn today?",
                 "features": ["welcome"],
             }
@@ -79,16 +100,37 @@ class TutorAgent:
         try:
             if query == "__INIT__":
                 return self.route_welcome_message(user)
-            agent_name = keyword_router(query)
 
-            if not agent_name:
-                agent_name = self.route_query_llm(query)
+            selected_agents = self.route_query_llm(query, chat_history)
+            logger.info(f"Selected agents: {selected_agents}")
+            responses = []
+            for agent_name in selected_agents:
+                if agent_name in self.agents:
+                    logger.info(f"Selected {agent_name} for the query")
+                    try:
+                        resp = self.agents[agent_name].run(query, chat_history)
+                        responses.append(resp)
+                    except Exception as agent_error:
+                        logger.exception(f"{agent_name} failed: {agent_error}")
+                        responses.append(
+                            {
+                                "component_type": "knowledge",
+                                "title": f"{agent_name} Error",
+                                "content": str(agent_error),
+                                "features": [],
+                            }
+                        )
 
-            if agent_name not in self.agents:
-                agent_name = "KnowledgeAgent"
+            if len(responses) == 1:
+                return responses[0]
 
-            logger.info(f"Selected {agent_name} for the query")
-            return self.agents[agent_name].run(query, chat_history)
+            return {
+                "component_type": "multi-agent",
+                "title": "Combined Response",
+                "content": [r["content"] for r in responses],
+                "features": [r.get("features", []) for r in responses],
+            }
+
         except Exception as e:
             logger.exception(f"TutorAgent.run() failed: {e}")
             return {
@@ -99,4 +141,5 @@ class TutorAgent:
             }
 
 
+# Singleton instance
 ai_tutor_agent = TutorAgent()

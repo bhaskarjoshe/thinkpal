@@ -5,8 +5,10 @@ import { useAuthStore } from "../store/authStore";
 import { loginApi } from "../api/auth";
 import { useUIStore } from "../store/uiStore";
 import { useUserStore } from "../store/userStore";
+import { useChatStore } from "../store/chatStore";
 
 const LoginModal = () => {
+  const chatStore = useChatStore.getState();
   const { closeLoginModal, openSignupModal } = useUIStore();
   const { fetchUser } = useUserStore();
   const navigate = useNavigate();
@@ -31,7 +33,9 @@ const LoginModal = () => {
       const data = await loginApi(formData);
       login(data.token);
       navigate("/chat");
-      await fetchUser();
+      chatStore.resetStore();
+      chatStore.startNewChat();
+      fetchUser();
       closeLoginModal();
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid email or password");

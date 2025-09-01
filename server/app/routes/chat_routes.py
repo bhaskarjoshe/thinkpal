@@ -23,7 +23,7 @@ def chat(
     logger.info(f"Chat request received: {request.query}")
 
     chat_id, ui_response = handle_chat_request(
-        request.chat_id, request.query, db, current_user.id
+        request.chat_id, request.query, db, current_user
     )
 
     return ChatResponse(

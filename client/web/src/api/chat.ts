@@ -3,6 +3,7 @@ import { useAuthStore } from "../store/authStore";
 
 const API_BASE = import.meta.env.VITE_SERVER_BASE_URL;
 
+
 export const chatApi = async (payload: {
   chat_id: string | null;
   chat_mode: string;
