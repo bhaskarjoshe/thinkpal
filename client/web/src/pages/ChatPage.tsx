@@ -1,4 +1,3 @@
-// ChatPage.tsx
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Navbar from "../components/Navbar";
@@ -18,10 +17,23 @@ const ChatPage = () => {
   const { userData } = useUserStore();
   const [quickTopics, setQuickTopics] = useState<string[]>([]);
   const [chatMode, setChatMode] = useState<string>("normal");
-  const { chatId, messages, addMessage, inputQuery, setInputQuery } = useChatStore();
+  const {
+    chatId,
+    messages,
+    addMessage,
+    inputQuery,
+    setInputQuery,
+    startNewChat,
+    loading,
+    setLoading,
+  } = useChatStore();
 
-  const [loading, setLoading] = useState<boolean>(false);
-
+  useEffect(() => {
+    console.log("Chat page loaded");
+    (async () => {
+      await startNewChat();
+    })();
+  }, [startNewChat]);
 
   useEffect(() => {
     if (userData) {
@@ -48,7 +60,7 @@ const ChatPage = () => {
 
     try {
       const response = await chatApi({
-        chat_id: chatId,
+        chat_id: chatId!,
         chat_mode: chatMode,
         query: userMessage.content,
       });

@@ -14,7 +14,30 @@ export const chatApi = async (payload: {
         Authorization: `Bearer ${useAuthStore.getState().token}`,
       },
     });
-    console.log(response.data)
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    console.error(
+      "Chat failed:",
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Chat failed"
+    );
+    throw new Error(
+      (error as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message || "Chat failed"
+    );
+  }
+};
+
+export const newChatApi = async () => {
+  try {
+    const response = await axios.post(`${API_BASE}/chat/new`, {},{
+      headers: {
+        Authorization: `Bearer ${useAuthStore.getState().token}`,
+      },
+    });
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {

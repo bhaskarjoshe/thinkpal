@@ -1,39 +1,48 @@
-// store/chatStore.ts
 import { create } from "zustand";
-import { v4 as uuidv4 } from "uuid";
 import type { ChatMessage } from "../types/types";
+import { newChatApi } from "../api/chat";
 
 type ChatStore = {
-  chatId: string;
-  resetChat: () => void;
+  chatId: string | null;
   inputQuery: string;
-  setInputQuery: (query: string) => void;
   messages: ChatMessage[];
+  loading: boolean;
+
+  setInputQuery: (query: string) => void;
   setMessages: (messages: ChatMessage[]) => void;
+  setLoading: (loading: boolean) => void;
   addMessage: (message: ChatMessage) => void;
+  startNewChat: () => Promise<void>;
 };
 
 export const useChatStore = create<ChatStore>((set) => ({
-  chatId: uuidv4(),
-  resetChat: () => set({ chatId: uuidv4(), messages: [] }),
-
+  chatId: null,
   inputQuery: "",
+  messages: [],
+  loading: false,
+
   setInputQuery: (query: string) => set({ inputQuery: query }),
-
-  messages: [
-    {
-      id: uuidv4(),
-      role: "ai",
-      content: JSON.stringify({
-        component_type: "knowledge",
-        content:
-          "Hello! I am your AI Companion. Ask me anything to get started.",
-      }),
-    },
-  ],
-
   setMessages: (messages: ChatMessage[]) => set({ messages }),
-
+  setLoading: (loading: boolean) => set({ loading }),
   addMessage: (message: ChatMessage) =>
     set((state) => ({ messages: [...state.messages, message] })),
+
+  startNewChat: async () => {
+    set({ loading: true });
+    try {
+      const data = await newChatApi();
+      set({
+        chatId: data.chat_id,
+        messages: [
+          {
+            id: crypto.randomUUID(),
+            role: "ai",
+            content: JSON.stringify(data.ui_component),
+          },
+        ],
+      });
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));

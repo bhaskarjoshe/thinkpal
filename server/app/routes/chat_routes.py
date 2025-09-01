@@ -1,3 +1,5 @@
+import uuid
+
 from app.config.db_config import get_db
 from app.config.logger_config import logger
 from app.config.security_config import get_current_user
@@ -28,4 +30,21 @@ def chat(
         status="success",
         chat_id=chat_id,
         ui_component=UIComponent(**ui_response),
+    )
+
+
+@router.post("/chat/new", response_model=ChatResponse)
+def new_chat(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    chat_id = uuid.uuid4()
+    return ChatResponse(
+        status="success",
+        chat_id=chat_id,
+        ui_component=UIComponent(
+            component_type="knowledge",
+            title="Welcome",
+            content="Hello! I am your AI Companion. Ask me anything to get started.",
+        ),
     )

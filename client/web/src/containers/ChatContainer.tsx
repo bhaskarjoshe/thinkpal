@@ -1,4 +1,3 @@
-// ChatContainer.tsx
 import { useRef, useEffect } from "react";
 import type { ChatMessage, UIComponent } from "../types/types";
 import { AIComponentRenderer } from "../components/AIComponentRenderer";
@@ -10,7 +9,11 @@ interface ChatContainerProps {
   setInputQuery: (query: string) => void;
 }
 
-const ChatContainer = ({ messages, loading, setInputQuery }: ChatContainerProps) => {
+const ChatContainer = ({
+  messages,
+  loading,
+  setInputQuery,
+}: ChatContainerProps) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,7 +22,7 @@ const ChatContainer = ({ messages, loading, setInputQuery }: ChatContainerProps)
 
   return (
     <div className="flex flex-col flex-1 gap-3 p-4 overflow-y-auto">
-      {messages.map((msg) => (
+      {(messages ?? []).map((msg) => (
         <div
           key={msg.id}
           className={`max-w-[70%] p-3 rounded-xl ${
@@ -28,15 +31,20 @@ const ChatContainer = ({ messages, loading, setInputQuery }: ChatContainerProps)
               : "bg-gray-100 text-gray-800 self-start"
           }`}
         >
-          {msg.role === "ai" ? (() => {
-            const components = JSON.parse(msg.content);
-            const componentArray = Array.isArray(components)
-              ? (components as UIComponent[])
-              : ([components] as UIComponent[]);
-            return <AIComponentRenderer setInputQuery={setInputQuery} components={componentArray} />;
-          })() : (
-            msg.content
-          )}
+          {msg.role === "ai"
+            ? (() => {
+                const components = JSON.parse(msg.content);
+                const componentArray = Array.isArray(components)
+                  ? (components as UIComponent[])
+                  : ([components] as UIComponent[]);
+                return (
+                  <AIComponentRenderer
+                    setInputQuery={setInputQuery}
+                    components={componentArray}
+                  />
+                );
+              })()
+            : msg.content}
         </div>
       ))}
       {loading && <CardSkeleton />}
