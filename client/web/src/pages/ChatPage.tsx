@@ -60,12 +60,17 @@ const ChatPage = () => {
       const aiMessage: ChatMessage = {
         id: uuidv4(),
         role: "ai",
-        content: JSON.stringify(
-          response.ui_component || {
-            component_type: "knowledge",
-            content: "Sorry, no response.",
-          }
-        ),
+        ui_components:
+          response.ui_components && response.ui_components.length > 0
+            ? response.ui_components
+            : [
+                {
+                  component_type: "knowledge",
+                  title: "No Response",
+                  content: "Sorry, no response.",
+                  features: [],
+                },
+              ],
       };
       addMessage(aiMessage);
     } finally {
@@ -77,7 +82,7 @@ const ChatPage = () => {
       <Navbar />
       <div className="flex flex-1 h-screen overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-100 border-r border-gray-200 flex flex-col gap-8 p-6 bg-white shadow-sm">
+        <aside className="h-full w-100 border-r border-gray-200 flex flex-col gap-8 p-6 bg-white shadow-sm sticky top-0">
           {/* Quick Topics */}
           <div>
             <h2 className="text-lg font-bold mb-4 flex gap-2 items-center text-gray-800">

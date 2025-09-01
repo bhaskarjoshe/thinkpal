@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import type { ChatMessage, UIComponent } from "../types/types";
+import type { ChatMessage } from "../types/types";
 import { AIComponentRenderer } from "../components/AIComponentRenderer";
 import { CardSkeleton } from "../ui/CardSkelton";
 
@@ -19,7 +19,6 @@ const ChatContainer = ({
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
-
   return (
     <div className="flex flex-col flex-1 gap-3 p-4 overflow-y-auto">
       {(messages ?? []).map((msg) => (
@@ -31,20 +30,14 @@ const ChatContainer = ({
               : "bg-gray-100 text-gray-800 self-start"
           }`}
         >
-          {msg.role === "ai"
-            ? (() => {
-                const components = JSON.parse(msg.content);
-                const componentArray = Array.isArray(components)
-                  ? (components as UIComponent[])
-                  : ([components] as UIComponent[]);
-                return (
-                  <AIComponentRenderer
-                    setInputQuery={setInputQuery}
-                    components={componentArray}
-                  />
-                );
-              })()
-            : msg.content}
+          {msg.role === "ai" && msg.ui_components ? (
+            <AIComponentRenderer
+              setInputQuery={setInputQuery}
+              components={msg.ui_components}
+            />
+          ) : (
+            msg.content
+          )}
         </div>
       ))}
       {loading && <CardSkeleton />}

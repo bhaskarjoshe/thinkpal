@@ -15,6 +15,7 @@ export const chatApi = async (payload: {
         Authorization: `Bearer ${useAuthStore.getState().token}`,
       },
     });
+    console.log(response.data)
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -39,6 +40,7 @@ export const newChatApi = async () => {
         Authorization: `Bearer ${useAuthStore.getState().token}`,
       },
     });
+    console.log(response.data)
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {

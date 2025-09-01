@@ -16,7 +16,7 @@ export type QuizContent = {
 
 export type UIComponent = {
   component_type:
-    "knowledge"
+    | "knowledge"
     | "list"
     | "quiz"
     | "roadmap"
@@ -36,9 +36,8 @@ export type UIComponent = {
   example_usage?: string;
 };
 
-
 export type ChatMessage = {
   id: string;
   role: "user" | "ai";
-  content: string;
+  content?: string;          
 };

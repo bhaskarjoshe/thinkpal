@@ -31,18 +31,26 @@ const KnowledgeAgent = ({
       const aiMessage: ChatMessage = {
         id: uuidv4(),
         role: "ai",
-        content: JSON.stringify(
-          response.ui_component || {
-            component_type: "knowledge",
-            content: "Sorry, no response.",
-          }
-        ),
+        ui_components:
+          response.ui_components && response.ui_components.length > 0
+            ? response.ui_components
+            : [
+                {
+                  component_type: "knowledge",
+                  title: "No Response",
+                  content: "Sorry, no response.",
+                  features: [],
+                },
+              ],
       };
       addMessage(aiMessage);
+      
+      
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
+  
 
   // Safely extract smart choices + teacher prompt
   const smartChoices =

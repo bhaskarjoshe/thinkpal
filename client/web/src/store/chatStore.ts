@@ -38,7 +38,17 @@ export const useChatStore = create<ChatStore>((set) => ({
           {
             id: crypto.randomUUID(),
             role: "ai",
-            content: JSON.stringify(data.ui_component),
+            ui_components:
+              data.ui_components && data.ui_components.length > 0
+                ? data.ui_components
+                : [
+                    {
+                      component_type: "knowledge",
+                      title: "No Response",
+                      content: "Sorry, no response.",
+                      features: [],
+                    },
+                  ],
           },
         ],
       });
