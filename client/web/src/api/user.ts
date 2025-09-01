@@ -12,6 +12,8 @@ export const getUserData = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {

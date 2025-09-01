@@ -5,10 +5,12 @@ from app.agent.code_agent import CodeAgent
 from app.agent.knowledge_agent import KnowledgeAgent
 from app.agent.prompts.orchestrator_agent_prompt import build_routing_prompt
 from app.agent.prompts.orchestrator_agent_prompt import keyword_router
+from app.agent.prompts.welcome_prompt import WELCOME_PROMPT
 from app.agent.quiz_agent import QuizAgent
 from app.agent.roadmap_agent import RoadmapAgent
 from app.agent.visual_learning_agent import VisualLearningAgent
 from app.config.logger_config import logger
+from app.models.user_model import User
 from google import genai
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -21,7 +23,7 @@ class TutorAgent:
         self.visual_agent = VisualLearningAgent()
         self.roadmap_agent = RoadmapAgent()
         self.knowledge_agent = KnowledgeAgent()
-
+        self.user = None
         self.agents = {
             "CodeAgent": self.code_agent,
             "QuizAgent": self.quiz_agent,
@@ -42,12 +44,41 @@ class TutorAgent:
                 agent_name = "KnowledgeAgent"
         except Exception:
             agent_name = "KnowledgeAgent"
-
         return agent_name
 
-    def run(self, query: str, chat_history: list):
+    def route_welcome_message(self, user: User):
         try:
+            self.user = user
+            prompt = WELCOME_PROMPT.format(
+                name=self.user.name,
+                semester=self.user.semester or "Unknown",
+                skills=", ".join(self.user.skills or []),
+                interests=", ".join(self.user.interests or []),
+                programming_languages=", ".join(self.user.programming_languages or []),
+            )
+            api_response = client.models.generate_content(
+                model="gemini-2.5-flash", contents=prompt
+            )
+            raw_text = api_response.candidates[0].content.parts[0].text.strip()
 
+            if raw_text.startswith("```"):
+                raw_text = raw_text.strip("`")
+                if raw_text.lower().startswith("json"):
+                    raw_text = raw_text[4:].strip()
+            return json.loads(raw_text)
+        except Exception as e:
+            logger.exception(f"Failed to build welcome message: {e}")
+            return {
+                "component_type": "knowledge",
+                "title": f"Welcome, {self.user.name} 👋",
+                "content": "Hello! Welcome to ThinkPal. What would you like to learn today?",
+                "features": ["welcome"],
+            }
+
+    def run(self, query: str, chat_history: list, user: User):
+        try:
+            if query == "__INIT__":
+                return self.route_welcome_message(user)
             agent_name = keyword_router(query)
 
             if not agent_name:

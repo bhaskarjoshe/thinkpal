@@ -3,6 +3,7 @@ import { chatApi } from "../../api/chat";
 import { useChatStore } from "../../store/chatStore";
 import { v4 as uuidv4 } from "uuid";
 import type { ChatMessage } from "../../types/types";
+
 const KnowledgeAgent = ({
   component,
   index,
@@ -11,6 +12,7 @@ const KnowledgeAgent = ({
   index: number;
 }) => {
   const { chatId, addMessage } = useChatStore();
+
   const handleClick = async (query: string) => {
     try {
       const userMessage: ChatMessage = {
@@ -19,21 +21,34 @@ const KnowledgeAgent = ({
         content: query,
       };
       addMessage(userMessage);
+
       const response = await chatApi({
         chat_id: chatId,
         chat_mode: "normal",
         query: query,
       });
+
       const aiMessage: ChatMessage = {
         id: uuidv4(),
         role: "ai",
-        content: JSON.stringify(response.ui_component || { component_type: "knowledge", content: "Sorry, no response." }),
+        content: JSON.stringify(
+          response.ui_component || {
+            component_type: "knowledge",
+            content: "Sorry, no response.",
+          }
+        ),
       };
       addMessage(aiMessage);
     } catch (error) {
       console.log(error);
     }
   };
+
+  // Safely extract smart choices + teacher prompt
+  const smartChoices =
+    (component.content_json as Record<string, any>)?.smart_choices || [];
+  const nextTeacherPrompt =
+    (component.content_json as Record<string, any>)?.next_teacher_prompt || null;
 
   return (
     <div>
@@ -66,7 +81,33 @@ const KnowledgeAgent = ({
           </div>
         )}
 
-        {/* Next Topics to Learn */}
+        {/* Smart Choices from AI */}
+        {smartChoices.length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium mb-2">Smart Choices for You:</h3>
+            <div className="flex flex-wrap gap-2">
+              {smartChoices.map((choice: any, i: number) => (
+                <button
+                  key={i}
+                  onClick={() => handleClick(choice.label)}
+                  className="cursor-pointer px-4 py-2 text-sm border border-blue-400 rounded-xl 
+                         text-blue-600 hover:bg-blue-50 transition shadow-sm"
+                >
+                  {choice.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Teacher-style Next Prompt */}
+        {nextTeacherPrompt && (
+          <div className="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg text-sm text-gray-700">
+            {nextTeacherPrompt}
+          </div>
+        )}
+
+        {/* Next Topics to Learn (legacy field) */}
         {component.next_topics_to_learn?.length > 0 && (
           <div>
             <h3 className="text-sm font-medium mb-2">Next Topics to Learn:</h3>

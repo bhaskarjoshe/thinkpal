@@ -41,7 +41,7 @@ def new_chat(
     chat_id = uuid.uuid4()
 
     chat_id, ui_response = handle_chat_request(
-        str(chat_id), "__INIT__", db, current_user.id
+        str(chat_id), "__INIT__", db, current_user
     )
 
     return ChatResponse(
