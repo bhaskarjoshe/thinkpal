@@ -1,0 +1,67 @@
+from app.agent.prompts.code_agent_prompt import CODE_AGENT_SYSTEM_PROMPT
+from app.agent.prompts.knowledge_agent_prompt import KNOWLEDGE_AGENT_SYSTEM_PROMPT
+from app.agent.prompts.orchestrator_prompt import ROUTING_PROMPT
+from app.agent.prompts.quiz_agent_prompt import QUIZ_AGENT_PROMPT
+from app.agent.prompts.roadmap_agent_prompt import ROADMAP_AGENT_PROMPT
+from app.agent.prompts.visual_agent_prompt import VISUAL_AGENT_PROMPT
+from app.agent.tools.input_formatting_tool import format_agent_input_func_tool
+from app.agent.tools.orchestrator_agent_tools import route_query_func_tool
+from app.agent.tools.orchestrator_agent_tools import route_welcome_func_tool
+from google.adk.agents import Agent
+from google.adk.tools import agent_tool
+
+# knowledge agent
+knowledge_agent = Agent(
+    name="KnowledgeAgent",
+    model="gemini-2.5-flash",
+    instruction=KNOWLEDGE_AGENT_SYSTEM_PROMPT,
+    tools=[format_agent_input_func_tool],
+)
+
+# code agent
+code_agent = Agent(
+    name="CodeAgent",
+    model="gemini-2.5-flash",
+    instruction=CODE_AGENT_SYSTEM_PROMPT,
+    tools=[format_agent_input_func_tool],
+)
+
+# quiz agent
+quiz_agent = Agent(
+    name="QuizAgent",
+    model="gemini-2.5-flash",
+    instruction=QUIZ_AGENT_PROMPT,
+    tools=[format_agent_input_func_tool],
+)
+
+# roadmap agent
+roadmap_agent = Agent(
+    name="RoadmapAgent",
+    model="gemini-2.5-flash",
+    instruction=ROADMAP_AGENT_PROMPT,
+    tools=[format_agent_input_func_tool],
+)
+
+# visual agent
+visual_agent = Agent(
+    name="VisualLearningAgent",
+    model="gemini-2.5-flash",
+    instruction=VISUAL_AGENT_PROMPT,
+    tools=[format_agent_input_func_tool],
+)
+
+# orchestrator agent
+tutor_agent = Agent(
+    name="TutorAgent",
+    model="gemini-2.5-flash",
+    instruction=ROUTING_PROMPT,
+    tools=[
+        route_welcome_func_tool,
+        route_query_func_tool,
+        agent_tool.AgentTool(agent=knowledge_agent),
+        agent_tool.AgentTool(agent=code_agent),
+        agent_tool.AgentTool(agent=quiz_agent),
+        agent_tool.AgentTool(agent=roadmap_agent),
+        agent_tool.AgentTool(agent=visual_agent),
+    ],
+)
