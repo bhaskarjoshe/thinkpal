@@ -30,5 +30,4 @@ Chat History:
 """
 
 
-# Create FunctionTool with proper description for Google ADK
 format_agent_input_func_tool = FunctionTool(func=format_agent_input_tool)

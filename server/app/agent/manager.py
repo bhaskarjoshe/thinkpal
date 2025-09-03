@@ -10,6 +10,8 @@ from app.agent.agent import quiz_agent
 from app.agent.agent import roadmap_agent
 from app.agent.agent import tutor_agent
 from app.agent.agent import visual_agent
+from app.agent.prompts.orchestrator_prompt import ROUTING_PROMPT
+from app.agent.prompts.welcome_prompt import WELCOME_PROMPT
 from app.config.logger_config import logger
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -46,9 +48,6 @@ class AgentManager:
             logger.info("Global agents initialized successfully")
             self._initialized = True
 
-    # -------------------------
-    # Main Entry
-    # -------------------------
     def run_agent(self, query, chat_history, user, chat_id):
         """Main entrypoint: routes query and executes agents."""
         try:
@@ -56,14 +55,49 @@ class AgentManager:
                 chat_id, f"user_{user.id}" if user else "anonymous"
             )
 
-            # Special init command
             if query == "__INIT__":
-                return self._handle_welcome_message(user)
+                self.runner.agent.instruction = WELCOME_PROMPT.format(
+                    name=getattr(user, "name", "Guest"),
+                    semester=getattr(user, "semester", "Unknown"),
+                    skills=", ".join(getattr(user, "skills", []) or []),
+                    interests=", ".join(getattr(user, "interests", []) or []),
+                    programming_languages=", ".join(
+                        getattr(user, "programming_languages", []) or []
+                    ),
+                )
+            else:
+                self.runner.agent.instruction = ROUTING_PROMPT
 
-            # Step 1: Routing
-            agent_names = self._route_query(query, chat_history, user, session_id)
+            input_text = self._prepare_input(
+                query, chat_history, user, routing=(query != "__INIT__")
+            )
+            content_message = Content(role="user", parts=[Part(text=input_text)])
 
-            # Step 2: Execute selected agents
+            logger.info(f"Running TutorAgent for query: {query}")
+            response_gen = self.runner.run(
+                user_id=f"user_{user.id if user else 'anon'}",
+                session_id=session_id,
+                new_message=content_message,
+            )
+
+            if query == "__INIT__":
+                response = self._extract_agent_response(response_gen)
+                return {
+                    "ui_components": (
+                        [response]
+                        if isinstance(response, dict)
+                        else [
+                            {
+                                "component_type": "knowledge",
+                                "title": "Welcome",
+                                "content": str(response),
+                                "features": ["welcome"],
+                            }
+                        ]
+                    )
+                }
+
+            agent_names = self._extract_routing_response(response_gen)
             final_responses = self._run_selected_agents(
                 agent_names, query, chat_history, user, session_id
             )
@@ -73,34 +107,16 @@ class AgentManager:
             logger.exception(f"Error running agent for chat {chat_id}: {e}")
             return self._error_response(str(e))
 
-    # -------------------------
-    # Routing
-    # -------------------------
-    def _route_query(self, query, chat_history, user, session_id):
-        """Send query to TutorAgent and get routing decision."""
-        input_text = self._prepare_input(query, chat_history, user, routing=True)
-        content_message = Content(role="user", parts=[Part(text=input_text)])
-
-        logger.info(f"Routing query: {query}")
-        routing_gen = self.runner.run(
-            user_id=f"user_{user.id if user else 'anon'}",
-            session_id=session_id,
-            new_message=content_message,
-        )
-        return self._extract_routing_response(routing_gen)
-
     def _extract_routing_response(self, response_gen):
         """Parse TutorAgent response -> list of agent names."""
         try:
             response_text = self._collect_text_from_gen(response_gen)
             clean_text = self._strip_markdown_fences(response_text)
 
-            # Try JSON parse first
             agents = self._parse_routing_json(clean_text)
             if agents:
                 return agents
 
-            # Fallback: keyword search
             found = [a for a in self.agents if a in clean_text]
             return found if found else ["KnowledgeAgent"]
 
@@ -124,9 +140,6 @@ class AgentManager:
             logger.warning(f"Failed to parse routing JSON: {clean_text}")
             return None
 
-    # -------------------------
-    # Agent Execution
-    # -------------------------
     def _run_selected_agents(self, agent_names, query, chat_history, user, session_id):
         """Execute the list of routed agents and return responses."""
         results = []
@@ -171,9 +184,6 @@ class AgentManager:
             logger.exception(f"Error extracting agent response: {e}")
             return "Response extraction failed"
 
-    # -------------------------
-    # Shared Helpers
-    # -------------------------
     def _collect_text_from_gen(self, response_gen) -> str:
         """Flatten generator output into a string."""
         parts = []
@@ -209,9 +219,6 @@ class AgentManager:
         except Exception:
             return None
 
-    # -------------------------
-    # Session + User-Facing
-    # -------------------------
     def _create_session(self, chat_id: str, user_id: str) -> str:
         """Ensure session exists synchronously."""
         try:
@@ -238,39 +245,20 @@ class AgentManager:
             [f"{m['role'].capitalize()}: {m['content']}" for m in chat_history[-5:]]
         )
         if routing:
-            return f"Chat History:\n{history}\n\nCurrent Query: {query}\nUser: {user.name if user else 'Anonymous'}\n\nPlease decide which agents should handle this query."
-        return f"Chat History:\n{history}\n\nCurrent Query: {query}\nUser: {user.name if user else 'Anonymous'}\n\nPlease provide a detailed response."
+            return f"""Chat History:
+{history}
 
-    def _handle_welcome_message(self, user):
-        """Generate personalized welcome message."""
-        try:
-            info = {
-                "name": getattr(user, "name", "Guest"),
-                "semester": getattr(user, "semester", "Unknown"),
-                "skills": getattr(user, "skills", []),
-                "interests": getattr(user, "interests", []),
-                "languages": getattr(user, "programming_languages", []),
-            }
-            welcome = f"""Welcome {info['name']} 👋
-Semester: {info['semester']}
-Skills: {', '.join(info['skills']) or 'None specified'}
-Interests: {', '.join(info['interests']) or 'None specified'}
-Programming Languages: {', '.join(info['languages']) or 'None specified'}
+Current Query: {query}
+User: {user.name if user else 'Anonymous'}
 
-What would you like to learn today?"""
+Please decide which agents should handle this query."""
+        return f"""Chat History:
+{history}
 
-            return {
-                "ui_components": [
-                    {
-                        "component_type": "knowledge",
-                        "title": "Welcome",
-                        "content": welcome,
-                        "features": ["welcome"],
-                    }
-                ]
-            }
-        except Exception:
-            return self._error_response("Welcome message failed")
+Current Query: {query}
+User: {user.name if user else 'Anonymous'}
+
+Please provide a detailed response."""
 
     def _error_response(self, content: str):
         return {

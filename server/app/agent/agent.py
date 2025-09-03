@@ -1,12 +1,9 @@
 from app.agent.prompts.code_agent_prompt import CODE_AGENT_SYSTEM_PROMPT
 from app.agent.prompts.knowledge_agent_prompt import KNOWLEDGE_AGENT_SYSTEM_PROMPT
-from app.agent.prompts.orchestrator_prompt import ROUTING_PROMPT
 from app.agent.prompts.quiz_agent_prompt import QUIZ_AGENT_PROMPT
 from app.agent.prompts.roadmap_agent_prompt import ROADMAP_AGENT_PROMPT
 from app.agent.prompts.visual_agent_prompt import VISUAL_AGENT_PROMPT
 from app.agent.tools.input_formatting_tool import format_agent_input_func_tool
-from app.agent.tools.orchestrator_agent_tools import route_query_func_tool
-from app.agent.tools.orchestrator_agent_tools import route_welcome_func_tool
 from google.adk.agents import Agent
 from google.adk.tools import agent_tool
 
@@ -16,7 +13,7 @@ knowledge_agent = Agent(
     model="gemini-2.5-flash",
     instruction=KNOWLEDGE_AGENT_SYSTEM_PROMPT,
     tools=[format_agent_input_func_tool],
-    description="Specialized agent for answering conceptual and knowledge-based queries for Computer Science students"
+    description="Specialized agent for answering conceptual and knowledge-based queries for Computer Science students",
 )
 
 # code agent
@@ -25,7 +22,7 @@ code_agent = Agent(
     model="gemini-2.5-flash",
     instruction=CODE_AGENT_SYSTEM_PROMPT,
     tools=[format_agent_input_func_tool],
-    description="Specialized agent for handling programming, debugging, and code-related queries"
+    description="Specialized agent for handling programming, debugging, and code-related queries",
 )
 
 # quiz agent
@@ -34,7 +31,7 @@ quiz_agent = Agent(
     model="gemini-2.5-flash",
     instruction=QUIZ_AGENT_PROMPT,
     tools=[format_agent_input_func_tool],
-    description="Specialized agent for generating quizzes, MCQs, and practice questions"
+    description="Specialized agent for generating quizzes, MCQs, and practice questions",
 )
 
 # roadmap agent
@@ -43,7 +40,7 @@ roadmap_agent = Agent(
     model="gemini-2.5-flash",
     instruction=ROADMAP_AGENT_PROMPT,
     tools=[format_agent_input_func_tool],
-    description="Specialized agent for providing structured learning paths and study plans"
+    description="Specialized agent for providing structured learning paths and study plans",
 )
 
 # visual agent
@@ -52,14 +49,14 @@ visual_agent = Agent(
     model="gemini-2.5-flash",
     instruction=VISUAL_AGENT_PROMPT,
     tools=[format_agent_input_func_tool],
-    description="Specialized agent for creating visual learning aids, diagrams, and charts"
+    description="Specialized agent for creating visual learning aids, diagrams, and charts",
 )
+
 
 # orchestrator agent (tutor agent)
 tutor_agent = Agent(
     name="TutorAgent",
     model="gemini-2.5-flash",
-    instruction=ROUTING_PROMPT,
     tools=[
         agent_tool.AgentTool(agent=knowledge_agent),
         agent_tool.AgentTool(agent=code_agent),
@@ -67,5 +64,5 @@ tutor_agent = Agent(
         agent_tool.AgentTool(agent=roadmap_agent),
         agent_tool.AgentTool(agent=visual_agent),
     ],
-    description="Central orchestrator agent that routes queries to appropriate specialized agents"
+    description="Central orchestrator agent that routes queries to appropriate specialized agents",
 )
