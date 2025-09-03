@@ -95,7 +95,7 @@ class UIComponent(BaseModel):
             List[Dict],
         ]
     ] = None
-    content_image: Optional[str] = None
+    image_url: Optional[str] = None
     features: List[Union[str, Feature]] = []
     related_topics: Optional[List[Union[str, RelatedTopic]]] = None
     brute_force_solution: Optional[CodeSolution] = None

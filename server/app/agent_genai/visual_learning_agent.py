@@ -85,7 +85,7 @@ class VisualLearningAgent:
                 "component_type": "visual",
                 "title": query,
                 "content": explanation,
-                "content_image": image_url,
+                "image_url": image_url,
                 "features": ["visual", "diagram", "chart"],
             }
 

@@ -37,6 +37,12 @@ export type ForwardQuestion = {
   question: string;
 };
 
+export type VisualContent = {
+  title: string;
+  content: string;
+  image_url: string;
+};
+
 export type KnowledgeContent = {
   features: Feature[];
   next_topics_to_learn?: RelatedTopic[]; 
@@ -57,8 +63,8 @@ export type UIComponent = {
   title: string;
   content: string | string[];
   content_text?: string | null;
-  content_json?: QuizContent | KnowledgeContent | Record<string, any> | null;
-  content_image?: string | null;
+  content_json?: QuizContent | KnowledgeContent | VisualContent | Record<string, any> | null;
+  image_url?: string | null;
 
   features: (string | Feature)[];
   related_topics?: (string | RelatedTopic)[]; 

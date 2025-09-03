@@ -17,7 +17,7 @@ const VisualAgent = ({ component, index }: VisualAgentProps) => {
   const handleWheel = (e: React.WheelEvent<HTMLImageElement>) => {
     e.preventDefault();
     const zoomChange = e.deltaY < 0 ? 0.1 : -0.1;
-    setZoom((prev) => Math.min(Math.max(prev + zoomChange, 1), 3)); // min 1x, max 3x
+    setZoom((prev) => Math.min(Math.max(prev + zoomChange, 1), 3));
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLImageElement>) => {
@@ -44,7 +44,6 @@ const VisualAgent = ({ component, index }: VisualAgentProps) => {
     setOffset({ x: 0, y: 0 });
   };
 
-  // Close on ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") handleClose();
@@ -55,52 +54,69 @@ const VisualAgent = ({ component, index }: VisualAgentProps) => {
 
   return (
     <div>
+      {/* Main card */}
       <div
         key={index}
-        className="border rounded-lg p-4 shadow-md bg-yellow-50 animate-fadeIn"
+        className="rounded-2xl border border-gray-200 p-5 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 animate-fadeIn"
       >
-        <h3 className="font-bold text-lg mb-2">{component.title}</h3>
-        {/* {component.content && (
-          <p className="text-gray-700 mb-2">{component.content}</p>
-        )} */}
+        <h3 className="font-semibold text-xl text-indigo-700 mb-3">
+          {component.title}
+        </h3>
 
-        {component.content_image && (
+        {component.content && (
+          <p className="text-gray-800 leading-relaxed mb-3">
+            {component.content}
+          </p>
+        )}
+
+        {component.image_url && (
+          <div className="mt-3 rounded-2xl overflow-hidden">
           <img
-            src={component.content_image}
+            src={component.image_url}
             alt={component.title}
-            className="mt-2 rounded-lg shadow-md cursor-pointer max-h-64 object-contain w-full"
+            className="mx-auto max-h-64 object-contain transition-transform hover:scale-102 cursor-pointer  "
             onClick={() => setIsImageOpen(true)}
           />
+        </div>
+        
         )}
       </div>
 
       {/* Lightbox modal */}
-      {isImageOpen && component.content_image && (
+      {isImageOpen && component.image_url && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 cursor-grab"
+          className="fixed inset-0 bg-black bg-opacity-90 flex flex-col justify-center items-center z-50 cursor-grab p-6"
           onClick={handleClose}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         >
-          <img
-            ref={imageRef}
-            src={component.content_image}
-            alt={component.title}
-            className="max-w-[90%] max-h-[90%] rounded-lg shadow-lg object-contain"
-            style={{
-              transform: `scale(${zoom}) translate(${offset.x / zoom}px, ${
-                offset.y / zoom
-              }px)`,
-              transition: isDragging ? "none" : "transform 0.2s",
-              cursor: isDragging ? "grabbing" : "grab",
-            }}
-            onWheel={handleWheel}
-            onMouseDown={handleMouseDown}
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking image
-          />
+          <div className="max-w-[90%] max-h-[90%] flex flex-col items-center gap-6">
+            <img
+              ref={imageRef}
+              src={component.image_url}
+              alt={component.title}
+              className="max-h-[70vh] rounded-xl shadow-2xl object-contain bg-white p-2"
+              style={{
+                transform: `scale(${zoom}) translate(${offset.x / zoom}px, ${
+                  offset.y / zoom
+                }px)`,
+                transition: isDragging ? "none" : "transform 0.2s",
+                cursor: isDragging ? "grabbing" : "grab",
+              }}
+              onWheel={handleWheel}
+              onMouseDown={handleMouseDown}
+              onClick={(e) => e.stopPropagation()}
+            />
+            {component.content && (
+              <p className="text-white text-center max-w-2xl text-lg leading-relaxed">
+                {component.content}
+              </p>
+            )}
+          </div>
+
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 text-white text-2xl font-bold"
+            className="absolute top-5 right-6 text-white text-3xl font-bold hover:text-red-400 transition"
           >
             ×
           </button>
