@@ -12,6 +12,7 @@ import { LuFileQuestion, LuSend } from "react-icons/lu";
 import { FaRegEye } from "react-icons/fa";
 import { useUserStore } from "../store/userStore";
 import { useChatStore } from "../store/chatStore";
+import AddDocument from "../components/AddDocument";
 
 const ChatPage = () => {
   const { userData } = useUserStore();
@@ -183,6 +184,7 @@ const ChatPage = () => {
               onSubmit={handleSubmit}
               className="flex items-center gap-3 w-full max-w-4xl mx-auto"
             >
+              {/* <AddDocument maxFileSizeMB={10} /> */}
               <input
                 type="text"
                 value={inputQuery}

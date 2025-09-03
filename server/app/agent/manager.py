@@ -68,10 +68,10 @@ class AgentManager:
             else:
                 self.runner.agent.instruction = ROUTING_PROMPT
 
-            input_text = self._prepare_input(
-                query, chat_history, user, routing=(query != "__INIT__")
-            )
-            content_message = Content(role="user", parts=[Part(text=input_text)])
+            # input_text = self._prepare_input(
+            #     query, chat_history, user, routing=(query != "__INIT__")
+            # )
+            content_message = Content(role="user", parts=[Part(text=query)])
 
             logger.info(f"Running TutorAgent for query: {query}")
             response_gen = self.runner.run(
@@ -163,8 +163,7 @@ class AgentManager:
         runner = Runner(
             agent=agent, app_name="TutorApp", session_service=self.session_service
         )
-        input_text = self._prepare_input(query, chat_history, user, routing=False)
-        message = Content(role="user", parts=[Part(text=input_text)])
+        message = Content(role="user", parts=[Part(text=query)])
 
         agent_gen = runner.run(
             user_id=f"user_{user.id if user else 'anon'}",
@@ -237,40 +236,6 @@ class AgentManager:
         logger.info(f"Created session: {session.id}")
         return session.id
 
-    def _prepare_input(
-        self, query: str, chat_history: List[dict], user: Optional[Any], routing=False
-    ) -> str:
-        """Create input prompt for agents or router."""
-        history = "\n".join(
-            [f"{m['role'].capitalize()}: {m['content']}" for m in chat_history[-5:]]
-        )
-        if routing:
-            return f"""Chat History:
-{history}
-
-Current Query: {query}
-User: {user.name if user else 'Anonymous'}
-
-Please decide which agents should handle this query."""
-        return f"""Chat History:
-{history}
-
-Current Query: {query}
-User: {user.name if user else 'Anonymous'}
-
-Please provide a detailed response."""
-
-    def _error_response(self, content: str):
-        return {
-            "ui_components": [
-                {
-                    "component_type": "knowledge",
-                    "title": "Error",
-                    "content": content,
-                    "features": [],
-                }
-            ]
-        }
 
 
 agent_manager = AgentManager()

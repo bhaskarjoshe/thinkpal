@@ -6,6 +6,21 @@ from typing import Union
 from pydantic import BaseModel
 
 
+class Feature(BaseModel):
+    label: str
+    description: str
+
+
+class NextTopic(BaseModel):
+    label: str
+    description: str
+
+
+class SmartChoice(BaseModel):
+    label: str
+    action: str
+
+
 class Subtopic(BaseModel):
     name: str
     description: str
@@ -31,23 +46,33 @@ class RoadmapContent(BaseModel):
 
 
 class CodeSolution(BaseModel):
-    code: str
+    code: Optional[str]
     explanation: str
+    language: Optional[str] = "python"
+
+
+class KnowledgeContent(BaseModel):
+    features: List[Feature] = []
+    next_topics_to_learn: List[NextTopic] = []
+    smart_choices: Optional[List[SmartChoice]] = []
+    next_teacher_prompt: Optional[str] = None
 
 
 class UIComponent(BaseModel):
-    component_type: (
-        str  # "knowledge", "quiz", "roadmap", "code", "image", "text", "multi-agent"
-    )
+    component_type: str
     title: str
-    # Allow single string or list of strings for multi-agent content
     content: Union[str, List[str]]
     content_text: Optional[str] = None
-    content_json: Optional[Union[Dict, RoadmapContent, List[Dict]]] = None
+    content_json: Optional[
+        Union[Dict, RoadmapContent, KnowledgeContent, List[Dict]]
+    ] = None
     content_image: Optional[str] = None
-    # Allow single list of strings or list of lists for multi-agent features
-    features: Union[List[str], List[List[str]]] = []
-    next_topics_to_learn: Optional[List[str]] = None
+    features: List[Union[str, Feature]] = []
+    next_topics_to_learn: Optional[List[Union[str, NextTopic]]] = None
     brute_force_solution: Optional[CodeSolution] = None
     optimal_solution: Optional[CodeSolution] = None
     example_usage: Optional[str] = None
+    children: Optional[List["UIComponent"]] = None
+
+
+UIComponent.model_rebuild()

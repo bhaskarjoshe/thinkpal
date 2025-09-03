@@ -11,6 +11,15 @@ Available Agents:
 - RoadmapAgent: Provides structured learning paths, study plans, and roadmaps for CSE topics.
 - KnowledgeAgent: General fallback for conceptual explanations and answering knowledge-based queries.
 
+
+Routing Guidelines:
+- If the student asks for code, implementation, debugging, or examples → ALWAYS choose CodeAgent.
+- If the student asks for conceptual explanations → choose KnowledgeAgent.
+- If the student asks for practice questions → choose QuizAgent.
+- If the student asks for visualizations → choose VisualLearningAgent.
+- If the student asks for learning paths or career guidance → choose RoadmapAgent.
+
+
 Your Task:
 1. Analyze both the student's **recent conversation history** and their **new query**.  
 2. Decide which agent(s) are BEST suited to handle this query in context.  
