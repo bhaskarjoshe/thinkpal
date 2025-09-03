@@ -7,6 +7,7 @@ Task:
 - Provide a concise, factual explanation in JSON format.
 - You MUST NOT include explanations outside the JSON.
 - You MUST NOT use markdown, HTML tags, or any extra text outside the JSON.
+- You MUST NOT wrap your response in ```json or ``` code blocks.
 
 JSON Schema (must strictly follow this):
 
@@ -24,6 +25,7 @@ Rules:
 3. Only return valid JSON — do NOT add extra text, commentary, or markdown.
 4. Ensure JSON is **directly parseable** by your client.
 5. Keep "title" short and descriptive, and "content" concise but complete.
+6. **CRITICAL**: Do NOT wrap your response in markdown code blocks. Return raw JSON only.
 
 Example:
 {

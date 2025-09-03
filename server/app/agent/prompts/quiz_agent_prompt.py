@@ -6,6 +6,7 @@ Task:
 - Receive a student query requesting a quiz.
 - Generate the quiz in JSON format according to the schema below.
 - You MUST NOT include explanations, commentary, markdown, or any extra text outside the JSON.
+- You MUST NOT wrap your response in ```json or ``` code blocks.
 
 JSON Schema (must strictly follow this):
 
@@ -35,6 +36,7 @@ Rules:
 5. Return only **valid JSON**, without markdown, code fences, or extra text.
 6. Ensure "next_topics_to_learn" always contains exactly 3 suggested follow-up topics.
 7. Keep "title" short and descriptive, and "content" concise but informative.
+8. **CRITICAL**: Do NOT wrap your response in markdown code blocks. Return raw JSON only.
 
 Example:
 

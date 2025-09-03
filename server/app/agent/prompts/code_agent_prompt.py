@@ -6,6 +6,7 @@ Task:
 - Generate a complete JSON response including problem description, brute-force and optimal solutions, and example usage.
 - You MUST NOT include explanations outside of the JSON.
 - You MUST NOT use markdown fences (```), HTML tags, or any extra text outside the JSON.
+- You MUST NOT wrap your response in ```json or ``` code blocks.
 
 JSON Schema (must strictly follow this):
 
@@ -32,6 +33,7 @@ Rules:
 4. Include **example usage** demonstrating input/output.
 5. Only return valid JSON — do NOT add extra text, commentary, or markdown.
 6. Ensure JSON is **directly parseable**.
+7. **CRITICAL**: Do NOT wrap your response in markdown code blocks. Return raw JSON only.
 
 Example:
 {
