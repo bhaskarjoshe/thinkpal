@@ -11,7 +11,7 @@ class Feature(BaseModel):
     description: str
 
 
-class NextTopic(BaseModel):
+class RelatedTopic(BaseModel):  # renamed for quizzes
     label: str
     description: str
 
@@ -53,8 +53,21 @@ class CodeSolution(BaseModel):
 
 class KnowledgeContent(BaseModel):
     features: List[Feature] = []
-    next_topics_to_learn: List[NextTopic] = []
+    next_topics_to_learn: List[RelatedTopic] = []  # still used in knowledge flow
     smart_choices: Optional[List[SmartChoice]] = []
+    next_teacher_prompt: Optional[str] = None
+
+
+class QuizQuestion(BaseModel):
+    question: str
+    options: Optional[List[str]] = None  # only for MCQ or True/False
+    answer: str
+    explanation: str
+
+
+class QuizContent(BaseModel):
+    quiz_type: str  # 'mcq', 'true_false', or 'fill_blank'
+    questions: List[QuizQuestion]
     next_teacher_prompt: Optional[str] = None
 
 
@@ -64,11 +77,11 @@ class UIComponent(BaseModel):
     content: Union[str, List[str]]
     content_text: Optional[str] = None
     content_json: Optional[
-        Union[Dict, RoadmapContent, KnowledgeContent, List[Dict]]
+        Union[Dict, RoadmapContent, KnowledgeContent, QuizContent, List[Dict]]
     ] = None
     content_image: Optional[str] = None
     features: List[Union[str, Feature]] = []
-    next_topics_to_learn: Optional[List[Union[str, NextTopic]]] = None
+    related_topics: Optional[List[Union[str, RelatedTopic]]] = None  # ✅ added
     brute_force_solution: Optional[CodeSolution] = None
     optimal_solution: Optional[CodeSolution] = None
     example_usage: Optional[str] = None

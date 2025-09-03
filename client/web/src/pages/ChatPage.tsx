@@ -170,7 +170,7 @@ const ChatPage = () => {
         </aside>
         <main className="flex flex-col flex-1 bg-gray-50">
           {/* Chat container with padding */}
-          <div className="flex flex-col flex-1 w-full max-w-5xl mx-auto px-4 md:px-8">
+          <div className="flex flex-col flex-1 w-full max-w-6xl mx-auto px-4 md:px-8">
             <ChatContainer
               messages={messages}
               loading={loading}
@@ -179,7 +179,7 @@ const ChatPage = () => {
           </div>
 
           {/* Input Bar full width */}
-          <div className="border-t border-gray-200 bg-white w-full p-4 mt-auto">
+          <div className="border-t border-gray-200 bg-white p-4 mt-auto">
             <form
               onSubmit={handleSubmit}
               className="flex items-center gap-3 w-full max-w-4xl mx-auto"
