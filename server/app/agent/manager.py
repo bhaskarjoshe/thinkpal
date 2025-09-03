@@ -68,9 +68,6 @@ class AgentManager:
             else:
                 self.runner.agent.instruction = ROUTING_PROMPT
 
-            # input_text = self._prepare_input(
-            #     query, chat_history, user, routing=(query != "__INIT__")
-            # )
             content_message = Content(role="user", parts=[Part(text=query)])
 
             logger.info(f"Running TutorAgent for query: {query}")
@@ -235,7 +232,6 @@ class AgentManager:
         )
         logger.info(f"Created session: {session.id}")
         return session.id
-
 
 
 agent_manager = AgentManager()

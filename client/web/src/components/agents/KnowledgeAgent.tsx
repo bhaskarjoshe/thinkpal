@@ -5,17 +5,11 @@ import { v4 as uuidv4 } from "uuid";
 import type { ChatMessage } from "../../types/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  BookOpen,
-  Lightbulb,
-  ArrowRightCircle,
-  Download,
-  Compass,
-} from "lucide-react";
+import { BookOpen, Lightbulb, ArrowRightCircle, Download } from "lucide-react";
 import { useState } from "react";
 import jsPDF from "jspdf";
 
-const PAGE_CHAR_LIMIT = 1800;
+const PAGE_CHAR_LIMIT = 1800; // adjust page size
 
 const splitContentIntoPages = (content: string) => {
   const parts: string[] = [];
@@ -99,18 +93,16 @@ const KnowledgeAgent = ({
     doc.save(`${component.title || "knowledge"}.pdf`);
   };
 
+  const smartChoices =
+    (component.content_json as Record<string, any>)?.smart_choices || [];
   const nextTeacherPrompt =
     (component.content_json as Record<string, any>)?.next_teacher_prompt ||
-    null;
-
-  const userIntent =
-    (component.content_json as Record<string, any>)?.user_intent_analysis ||
     null;
 
   return (
     <div
       key={index}
-      className="p-6 border rounded-2xl shadow bg-white space-y-6"
+      className="p-6 border rounded-2xl shadow bg-white space-y-5"
     >
       {/* Title + Download */}
       <div className="flex justify-between items-center">
@@ -131,13 +123,13 @@ const KnowledgeAgent = ({
       </div>
 
       {/* Paginated Markdown Content */}
-      <div className="prose prose-blue max-w-none text-gray-800 leading-relaxed p-5 rounded bg-gray-50">
+      <div className="prose prose-blue max-w-none text-gray-800 leading-relaxed p-5 rounded">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{pages[page]}</ReactMarkdown>
       </div>
 
       {/* Pagination Controls */}
       {pages.length > 1 && (
-        <div className="flex justify-between items-center mt-3 text-sm text-gray-600">
+        <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
           <button
             disabled={page === 0}
             onClick={() => setPage((p) => p - 1)}
@@ -189,29 +181,23 @@ const KnowledgeAgent = ({
         </div>
       )}
 
-      {/* User Intent Analysis */}
-      {userIntent && (
+      {/* Smart Choices */}
+      {smartChoices.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <Compass className="w-4 h-4 text-purple-500" />
-            Suggested Next Steps
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            Smart Choices for You
           </h3>
-          <p className="text-xs text-gray-600 italic mb-2">
-            Likely you want: {userIntent.likely_direction}
-          </p>
           <div className="flex flex-wrap gap-2">
-            {userIntent.suggested_ui_options?.map(
-              (choice: string, i: number) => (
-                <button
-                  key={i}
-                  onClick={() => handleClick(choice)}
-                  className="cursor-pointer px-4 py-2 text-sm rounded-xl bg-purple-50 
-                           border border-purple-300 text-purple-700 hover:bg-purple-100 transition"
-                >
-                  {choice}
-                </button>
-              )
-            )}
+            {smartChoices.map((choice: any, i: number) => (
+              <button
+                key={i}
+                onClick={() => handleClick(choice.label)}
+                className="cursor-pointer px-4 py-2 text-sm rounded-xl bg-blue-50 
+                           border border-blue-300 text-blue-700 hover:bg-blue-100 transition"
+              >
+                {choice.label}
+              </button>
+            ))}
           </div>
         </div>
       )}

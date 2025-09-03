@@ -220,7 +220,7 @@ const QuizAgent = ({
 
               <button
                 onClick={() =>
-                  handleQuizRequest("Give a quiz on " + component.label)
+                  handleQuizRequest("Give another quiz on " + component.title)
                 }
                 className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors cursor-pointer"
               >
@@ -240,7 +240,7 @@ const QuizAgent = ({
               <button
                 key={i}
                 onClick={() =>
-                  handleQuizRequest("Give a quiz on " + topic.label)
+                  handleQuizRequest("Give quiz on " + topic.label)
                 }
                 className="p-3 text-left border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors cursor-pointer"
               >

@@ -27,12 +27,22 @@ export type RelatedTopic = {
   description: string;
 };
 
+export type ExtraQuestion = {
+  question: string; 
+  answer: string;
+};
+
+export type ForwardQuestion = {
+  title: string;
+  question: string;
+};
+
 export type KnowledgeContent = {
   features: Feature[];
   next_topics_to_learn?: RelatedTopic[]; 
   smart_choices?: { label: string; action: string }[];
   next_teacher_prompt?: string;
-};
+  };
 
 export type UIComponent = {
   component_type:
@@ -58,6 +68,9 @@ export type UIComponent = {
   optimal_solution?: CodeSolution;
   example_usage?: string;
   children?: UIComponent[];
+
+  extra_question?: ExtraQuestion;
+  extra_code_problems?: ForwardQuestion[];
 };
 
 export type ChatMessage = {
