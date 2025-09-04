@@ -192,6 +192,29 @@ const KnowledgeAgent = ({ component }: { component: UIComponent }) => {
           </div>
         </div>
       )}
+
+      {/* Suggested UI Options */}
+      {component.content_json?.user_intent_analysis?.suggested_ui_options
+        ?.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <Lightbulb className="w-4 h-4 text-yellow-500" /> You can try:
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {component.content_json?.user_intent_analysis?.suggested_ui_options?.map(
+              (option: string, idx: number) => (
+                <button
+                  key={idx}
+                  onClick={() => handleClick(chatId, addMessage, option + " for " + (component.title))}
+                  className="cursor-pointer px-4 py-2 text-sm rounded-xl bg-blue-50 border border-blue-300 text-blue-700 hover:bg-blue-100 transition"
+                >
+                  {option}
+                </button>
+              )
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
