@@ -57,28 +57,28 @@ const VisualAgent = ({ component, index }: VisualAgentProps) => {
       {/* Main card */}
       <div
         key={index}
-        className="rounded-2xl border border-gray-200 p-5 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 animate-fadeIn"
+        className="flex rounded-2xl border border-gray-200 p-5 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 animate-fadeIn"
       >
-        <h3 className="font-semibold text-xl text-indigo-700 mb-3">
-          {component.title}
-        </h3>
+        <div className="flex flex-col gap-3">
+          <h3 className="font-semibold text-xl text-indigo-700 mb-3">
+            {component.title}
+          </h3>
 
-        {component.content && (
-          <p className="text-gray-800 leading-relaxed mb-3">
-            {component.content}
-          </p>
-        )}
-
-        {component.image_url && (
-          <div className="mt-3 rounded-2xl overflow-hidden">
-          <img
-            src={component.image_url}
-            alt={component.title}
-            className="mx-auto max-h-64 object-contain transition-transform hover:scale-102 cursor-pointer  "
-            onClick={() => setIsImageOpen(true)}
-          />
+          {component.content && (
+            <p className="text-gray-800 leading-relaxed mb-3">
+              {component.content}
+            </p>
+          )}
         </div>
-        
+        {component.image_url && (
+          <div className="mt-3 rounded-2xl overflow-hidden h-64 w-[100%]">
+            <img
+              src={component.image_url}
+              alt={component.title}
+              className="mx-auto  object-contain transition-transform hover:scale-102 cursor-pointer  "
+              onClick={() => setIsImageOpen(true)}
+            />
+          </div>
         )}
       </div>
 

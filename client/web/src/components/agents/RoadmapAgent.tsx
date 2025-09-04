@@ -440,11 +440,10 @@ const RoadmapAgent = ({
                                                   <ul className="space-y-2">
                                                     {topic.resources.map(
                                                       (resource, idx) => {
-                                                        // Split into label and URL
                                                         const [label, url] =
                                                           resource.split(
                                                             /:\s(.+)/
-                                                          ); // split only at first ": "
+                                                          );
                                                         return (
                                                           <li
                                                             key={idx}
