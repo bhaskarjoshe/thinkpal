@@ -3,21 +3,22 @@ export const semesterOptions = Array.from({ length: 8 }, (_, i) => ({
   value: (i + 1).toString(),
 }));
 
-
 export const skillOptions = [
-  { label: "C", value: "C" },
-  { label: "C++", value: "C++" },
-  { label: "Java", value: "Java" },
-  { label: "Python", value: "Python" },
-  { label: "JavaScript", value: "JavaScript" },
   { label: "React", value: "React" },
   { label: "Node.js", value: "Node.js" },
-  { label: "SQL", value: "SQL" },
-  { label: "MongoDB", value: "MongoDB" },
-  { label: "Machine Learning", value: "ML" },
-  { label: "AI", value: "AI" },
-  { label: "DevOps", value: "DevOps" },
-  { label: "UI/UX", value: "UI/UX" },
+  { label: "Django", value: "Django" },
+  { label: "Spring Boot", value: "Spring Boot" },
+  { label: "TensorFlow", value: "TensorFlow" },
+  { label: "PyTorch", value: "PyTorch" },
+  { label: "Docker", value: "Docker" },
+  { label: "Kubernetes", value: "Kubernetes" },
+  { label: "AWS", value: "AWS" },
+  { label: "Azure", value: "Azure" },
+  { label: "Figma", value: "Figma" },
+  { label: "Git & GitHub", value: "GitHub" },
+  { label: "Agile / Scrum", value: "Agile" },
+  { label: "Data Structures & Algorithms", value: "DSA" },
+  { label: "Operating Systems", value: "OS" },
 ];
 
 export const interestOptions = [
@@ -33,6 +34,8 @@ export const interestOptions = [
   { label: "Cloud Computing", value: "Cloud Computing" },
   { label: "UI/UX Design", value: "UI/UX Design" },
   { label: "Robotics", value: "Robotics" },
+  { label: "Embedded Systems", value: "Embedded Systems" },
+  { label: "AR/VR", value: "AR/VR" },
 ];
 
 export const languageOptions = [
@@ -45,4 +48,9 @@ export const languageOptions = [
   { label: "Rust", value: "Rust" },
   { label: "Kotlin", value: "Kotlin" },
   { label: "Swift", value: "Swift" },
+  { label: "PHP", value: "PHP" },
+  { label: "TypeScript", value: "TypeScript" },
+  { label: "R", value: "R" },
+  { label: "MATLAB", value: "MATLAB" },
+  { label: "Scala", value: "Scala" },
 ];

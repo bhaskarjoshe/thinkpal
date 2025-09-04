@@ -3,11 +3,11 @@ from datetime import timezone
 
 from app.config.db_config import Base
 from sqlalchemy import JSON
-from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 
@@ -23,6 +23,9 @@ class User(Base):
     skills = Column(JSON, nullable=True)
     interests = Column(JSON, nullable=True)
     programming_languages = Column(JSON, nullable=True)
+
+    resume_data = Column(JSONB, nullable=True)
+    resume_analysis = Column(JSONB, nullable=True)
 
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(

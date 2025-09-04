@@ -14,6 +14,8 @@ class UserCreate(UserBase):
     skills: list[str] | None = None
     interests: list[str] | None = None
     programming_languages: list[str] | None = None
+    resume_data: dict | None = None
+    resume_analysis: dict | None = None
 
 
 class UserResponse(UserBase):

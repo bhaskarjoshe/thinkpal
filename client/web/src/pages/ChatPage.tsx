@@ -184,7 +184,7 @@ const ChatPage = () => {
               onSubmit={handleSubmit}
               className="flex items-center gap-3 w-full max-w-4xl mx-auto"
             >
-              {/* <AddDocument maxFileSizeMB={10} /> */}
+              <AddDocument maxFileSizeMB={10} />
               <input
                 type="text"
                 value={inputQuery}

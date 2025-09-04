@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, type ChangeEvent } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { MdOutlineDocumentScanner } from "react-icons/md";
 import { IoDocumentsOutline } from "react-icons/io5";
+import { uploadResume } from "../api/document";
 
 interface AddDocumentProps {
   maxFileSizeMB?: number;
@@ -12,8 +13,18 @@ export default function AddDocument({ maxFileSizeMB = 5 }: AddDocumentProps) {
   const MAX_FILE_SIZE = maxFileSizeMB * 1024 * 1024;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleAddDocument = (file: File, type: string) => {
+  const handleAddDocument = async (file: File, type: string) => {
     console.log(`Uploading ${type}:`, file);
+
+    if (type === "Resume") {
+      try {
+        await uploadResume(file);
+      } catch (err) {
+        console.error("Resume upload failed:", err);
+      }
+    } else {
+      console.log("Other document upload not implemented yet.");
+    }
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, type: string) => {
@@ -48,7 +59,11 @@ export default function AddDocument({ maxFileSizeMB = 5 }: AddDocumentProps) {
     <div className="relative inline-block" ref={containerRef}>
       {/* Main Button */}
       <button
-        onClick={() => setShowOptions(!showOptions)}
+        onClick={(e) => {
+          if (e.detail !== 0) {
+            setShowOptions(!showOptions);
+          }
+        }}
         className="text-gray-600 bg-gray-50 hover:bg-gray-100 w-10 h-10 p-2 rounded-full
                    flex items-center justify-center cursor-pointer transition-colors duration-200
                    border border-gray-300"

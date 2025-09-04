@@ -6,6 +6,7 @@ from app.config.openapi_config import custom_openapi
 from app.routes import auth_routes
 from app.routes import chat_routes
 from app.routes import user_routes
+from app.routes import document_routes
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -31,6 +32,7 @@ async def shutdown_event():
 app.include_router(auth_routes.router, tags=["Auth"])
 app.include_router(chat_routes.router, tags=["Chat"])
 app.include_router(user_routes.router, tags=["User"])
+app.include_router(document_routes.router, tags=["Document"])
 
 app.add_middleware(
     CORSMiddleware,
