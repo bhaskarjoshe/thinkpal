@@ -1,9 +1,36 @@
 from typing import Dict
 from typing import List
+from typing import Literal
 from typing import Optional
 from typing import Union
 
 from pydantic import BaseModel
+
+
+class Subtopic(BaseModel):
+    name: str
+    description: str
+    examples: Optional[List[str]] = []
+
+
+class Topic(BaseModel):
+    topic_name: str
+    brief: str
+    subtopics: List[Subtopic]
+    resources: List[str]
+    expected_outcome: str
+
+
+class Level(BaseModel):
+    level_name: Literal["Beginner", "Intermediate", "Advanced"]
+    description: str
+    topics: List[Topic]
+
+
+class RoadmapContent(BaseModel):
+    roadmap_type: Literal["structured"] = "structured"
+    # Accept either dict of levels or a list of Level objects
+    levels: Union[Dict[str, List[Dict]], List[Level]]
 
 
 class Feature(BaseModel):
@@ -19,30 +46,6 @@ class RelatedTopic(BaseModel):
 class SmartChoice(BaseModel):
     label: str
     action: str
-
-
-class Subtopic(BaseModel):
-    name: str
-    description: str
-    example: Optional[str] = None
-
-
-class Topic(BaseModel):
-    topic_name: str
-    brief: str
-    subtopics: List[Subtopic]
-    resources: List[str]
-    expected_outcome: str
-
-
-class Level(BaseModel):
-    level_name: str
-    description: str
-    topics: List[Topic]
-
-
-class RoadmapContent(BaseModel):
-    levels: List[Level]
 
 
 class CodeSolution(BaseModel):
@@ -82,9 +85,11 @@ class ForwardQuestion(BaseModel):
 
 
 class UIComponent(BaseModel):
-    component_type: str
+    component_type: Literal[
+        "roadmap", "knowledge", "list", "quiz", "code", "visual", "text"
+    ]
     title: str
-    content: Union[str, List[str]]
+    content: Optional[Union[str, List[str]]] = None
     content_text: Optional[str] = None
     content_json: Optional[
         Union[
@@ -102,12 +107,8 @@ class UIComponent(BaseModel):
     optimal_solution: Optional[CodeSolution] = None
     example_usage: Optional[str] = None
     children: Optional[List["UIComponent"]] = None
-
-    extra_question: ExtraQuestion = ExtraQuestion(question="", answer="")
-    extra_code_problems: List[ForwardQuestion] = [
-        ForwardQuestion(title="", question=""),
-        ForwardQuestion(title="", question=""),
-    ]
+    extra_question: Optional[ExtraQuestion] = None
+    extra_code_problems: Optional[List[ForwardQuestion]] = None
 
 
 UIComponent.model_rebuild()

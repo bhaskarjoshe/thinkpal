@@ -53,7 +53,7 @@ const VisualAgent = ({ component, index }: VisualAgentProps) => {
   }, []);
 
   return (
-    <div>
+    <div className="max-w-4xl">
       {/* Main card */}
       <div
         key={index}

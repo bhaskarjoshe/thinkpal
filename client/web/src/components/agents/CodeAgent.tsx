@@ -78,7 +78,7 @@ const CodeAgent = ({ component, index }: CodeAgentProps) => {
   const renderSolution = (
     solution: typeof brute_force_solution | typeof optimal_solution
   ) => (
-    <div className="mb-4 space-y-4">
+    <div className="mb-4 space-y-4 ">
       {solution?.code && (
         <div>
           <strong className="text-white text-lg">Code:</strong>
@@ -115,7 +115,7 @@ const CodeAgent = ({ component, index }: CodeAgentProps) => {
   return (
     <div
       key={index}
-      className="backdrop-blur-md bg-gray-900/95 border border-white/20 rounded-xl p-6 shadow-2xl text-green-300 font-mono text-sm animate-fadeIn mb-6 hover:border-white/30 transition-all duration-300"
+      className="max-w-3xl backdrop-blur-md bg-gray-900/95 border border-white/20 rounded-xl p-6 shadow-2xl text-green-300 font-mono text-sm animate-fadeIn mb-6 hover:border-white/30 transition-all duration-300"
     >
       {/* Title */}
       {title && <h3 className="font-bold text-2xl mb-4 text-white">{title}</h3>}

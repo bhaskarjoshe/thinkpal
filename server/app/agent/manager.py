@@ -175,10 +175,33 @@ class AgentManager:
             full_response = self._collect_text_from_gen(response_gen)
             if not full_response:
                 return "No response generated"
-            return self._parse_agent_json(full_response) or full_response
+            parsed = self._parse_agent_json(full_response)
+            if not parsed:
+                return full_response
+
+            parsed = self._normalize_ui_component(parsed)
+            return parsed
         except Exception as e:
             logger.exception(f"Error extracting agent response: {e}")
             return "Response extraction failed"
+
+    def _normalize_ui_component(self, data: dict) -> dict:
+        """Ensure UIComponent matches backend schema."""
+        try:
+            if data.get("component_type") == "roadmap":
+                levels = data.get("levels")
+                if levels:
+                    data["content_json"] = {
+                        "roadmap_type": data.get("roadmap_type", "structured"),
+                        "levels": levels,
+                    }
+                    data.pop("levels", None)
+                    data.pop("roadmap_type", None)
+            return data
+        except Exception as e:
+            logger.exception(f"Failed to normalize UIComponent: {e}")
+            return data
+
 
     def _collect_text_from_gen(self, response_gen) -> str:
         """Flatten generator output into a string."""

@@ -1,15 +1,13 @@
 import type { UIComponent } from "../../types/types";
-import { chatApi } from "../../api/chat";
 import { useChatStore } from "../../store/chatStore";
-import { v4 as uuidv4 } from "uuid";
-import type { ChatMessage } from "../../types/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { BookOpen, Lightbulb, ArrowRightCircle, Download } from "lucide-react";
 import { useState } from "react";
 import jsPDF from "jspdf";
+import { handleClick } from "../../utils/chatApiCall";
 
-const PAGE_CHAR_LIMIT = 1800; // adjust page size
+const PAGE_CHAR_LIMIT = 1800; 
 
 const splitContentIntoPages = (content: string) => {
   const parts: string[] = [];
@@ -26,10 +24,8 @@ const splitContentIntoPages = (content: string) => {
 
 const KnowledgeAgent = ({
   component,
-  index,
 }: {
   component: UIComponent;
-  index: number;
 }) => {
   const { chatId, addMessage } = useChatStore();
   const [page, setPage] = useState(0);
@@ -37,41 +33,7 @@ const KnowledgeAgent = ({
   const pages = splitContentIntoPages(component.content || "");
   const isLongResponse = (component.content?.length || 0) > PAGE_CHAR_LIMIT;
 
-  const handleClick = async (query: string) => {
-    try {
-      const userMessage: ChatMessage = {
-        id: uuidv4(),
-        role: "user",
-        content: query,
-      };
-      addMessage(userMessage);
-
-      const response = await chatApi({
-        chat_id: chatId,
-        chat_mode: "normal",
-        query: query,
-      });
-
-      const aiMessage: ChatMessage = {
-        id: uuidv4(),
-        role: "ai",
-        ui_components:
-          response.ui_components && response.ui_components.length > 0
-            ? response.ui_components
-            : [
-                {
-                  component_type: "knowledge",
-                  title: "No Response",
-                  content: "Sorry, no response.",
-                  features: [],
-                },
-              ],
-      };
-      addMessage(aiMessage);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  
 
   const handleDownload = () => {
     const doc = new jsPDF("p", "pt", "a4");
@@ -101,8 +63,7 @@ const KnowledgeAgent = ({
 
   return (
     <div
-      key={index}
-      className="p-6 border rounded-2xl shadow bg-white space-y-5"
+      className="p-6 border max-w-3xl mx-auto rounded-2xl shadow bg-white space-y-5"
     >
       {/* Title + Download */}
       <div className="flex justify-between items-center">
@@ -167,7 +128,7 @@ const KnowledgeAgent = ({
               return (
                 <div
                   key={i}
-                  onClick={() => handleClick(label)}
+                  onClick={() => handleClick(chatId, addMessage, label)}
                   className="cursor-pointer p-3 border rounded-xl bg-gray-50 hover:bg-gray-100 transition shadow-sm"
                 >
                   <p className="font-medium text-gray-800">{label}</p>
@@ -184,16 +145,17 @@ const KnowledgeAgent = ({
       {/* Smart Choices */}
       {smartChoices.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Smart Choices for You
+          <h3 className="text-sm flex items-center gap-2 font-semibold text-gray-700 mb-2">
+            <Lightbulb className="w-4 h-4 text-yellow-500" /> Smart Choices for
+            You
           </h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col items-start gap-2">
             {smartChoices.map((choice: any, i: number) => (
               <button
                 key={i}
-                onClick={() => handleClick(choice.label)}
-                className="cursor-pointer px-4 py-2 text-sm rounded-xl bg-blue-50 
-                           border border-blue-300 text-blue-700 hover:bg-blue-100 transition"
+                onClick={() => handleClick(chatId, addMessage, choice.label)}
+                className="cursor-pointer pl-4 pr-8 py-2 text-sm rounded-xl bg-blue-50 
+                 border border-blue-300 text-blue-700 hover:bg-blue-100 transition"
               >
                 {choice.label}
               </button>
@@ -225,7 +187,7 @@ const KnowledgeAgent = ({
               return (
                 <div
                   key={i}
-                  onClick={() => handleClick(label)}
+                  onClick={() => handleClick(chatId, addMessage, label)}
                   className="cursor-pointer p-3 border rounded-xl bg-white hover:bg-gray-50 transition shadow-sm"
                 >
                   <p className="font-medium text-gray-800">{label}</p>

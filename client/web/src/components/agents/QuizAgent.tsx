@@ -86,7 +86,7 @@ const QuizAgent = ({
   return (
     <div
       key={index}
-      className="border border-gray-200 rounded-lg p-6 bg-white space-y-6"
+      className="border border-gray-200 rounded-lg p-6 bg-white space-y-6 max-w-4xl"
     >
       {/* Quiz Header */}
       <div className="border-b border-gray-200 pb-4">

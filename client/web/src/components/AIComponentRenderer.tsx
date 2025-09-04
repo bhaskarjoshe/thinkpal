@@ -30,8 +30,6 @@ export const AIComponentRenderer = ({
               <RoadmapAgent
                 key={index}
                 component={component}
-                index={index}
-                setInputQuery={setInputQuery}
               />
             );
 
@@ -46,8 +44,6 @@ export const AIComponentRenderer = ({
               <KnowledgeAgent
                 key={index}
                 component={component}
-                index={index}
-                setInputQuery={setInputQuery}
               />
             );
 

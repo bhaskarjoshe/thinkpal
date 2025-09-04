@@ -24,7 +24,7 @@ const ChatContainer = ({
       {(messages ?? []).map((msg) => (
         <div
           key={msg.id}
-          className={`max-w-[70%] p-3 rounded-xl ${
+          className={`max-w-[80%] p-3 rounded-xl ${
             msg.role === "user"
               ? "bg-gray-100 text-gray-800 self-end"
               : "bg-gray-100 text-gray-800 self-start"
