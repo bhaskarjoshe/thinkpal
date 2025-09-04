@@ -7,7 +7,7 @@ import { useState } from "react";
 import jsPDF from "jspdf";
 import { handleClick } from "../../utils/chatApiCall";
 
-const PAGE_CHAR_LIMIT = 1800; 
+const PAGE_CHAR_LIMIT = 1800;
 
 const splitContentIntoPages = (content: string) => {
   const parts: string[] = [];
@@ -22,18 +22,12 @@ const splitContentIntoPages = (content: string) => {
   return parts;
 };
 
-const KnowledgeAgent = ({
-  component,
-}: {
-  component: UIComponent;
-}) => {
+const KnowledgeAgent = ({ component }: { component: UIComponent }) => {
   const { chatId, addMessage } = useChatStore();
   const [page, setPage] = useState(0);
 
   const pages = splitContentIntoPages(component.content || "");
   const isLongResponse = (component.content?.length || 0) > PAGE_CHAR_LIMIT;
-
-  
 
   const handleDownload = () => {
     const doc = new jsPDF("p", "pt", "a4");
@@ -62,9 +56,7 @@ const KnowledgeAgent = ({
     null;
 
   return (
-    <div
-      className="p-6 border max-w-3xl mx-auto rounded-2xl shadow bg-white space-y-5"
-    >
+    <div className="p-6 border max-w-3xl mx-auto rounded-2xl shadow bg-white space-y-5">
       {/* Title + Download */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
@@ -84,7 +76,7 @@ const KnowledgeAgent = ({
       </div>
 
       {/* Paginated Markdown Content */}
-      <div className="prose prose-blue max-w-none text-gray-800 leading-relaxed p-5 rounded">
+      <div className="wrap prose prose-blue text-gray-800 leading-relaxed p-5 rounded break-words max-h-[600px] overflow-auto">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{pages[page]}</ReactMarkdown>
       </div>
 

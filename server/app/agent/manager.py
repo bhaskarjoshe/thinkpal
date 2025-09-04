@@ -1,6 +1,5 @@
 import asyncio
 import json
-from typing import Any
 from typing import List
 from typing import Optional
 
@@ -155,18 +154,34 @@ class AgentManager:
                 results.append({"tool": agent_name, "response": f"Error: {str(e)}"})
         return results
 
-    def _execute_agent(self, agent, query, chat_history, user, session_id):
-        """Run selected agent + extract response."""
+    def _execute_agent(
+        self, agent, query, chat_history, user, session_id, max_history=5
+    ):
+        """Run selected agent + extract response using the last N messages from chat history."""
         runner = Runner(
             agent=agent, app_name="TutorApp", session_service=self.session_service
         )
-        message = Content(role="user", parts=[Part(text=query)])
+
+        recent_history = chat_history[-max_history:]
+
+        history_parts = []
+        for msg in recent_history:
+            if msg["role"] == "assistant" and not msg["content"].strip():
+                continue
+            history_parts.append(
+                Part(text=f"{msg['role'].capitalize()}: {msg['content']}")
+            )
+
+        history_parts.append(Part(text=f"User: {query}"))
+
+        message = Content(role="user", parts=history_parts)
 
         agent_gen = runner.run(
             user_id=f"user_{user.id if user else 'anon'}",
             session_id=session_id,
             new_message=message,
         )
+
         return self._extract_agent_response(agent_gen)
 
     def _extract_agent_response(self, response_gen):
@@ -201,7 +216,6 @@ class AgentManager:
         except Exception as e:
             logger.exception(f"Failed to normalize UIComponent: {e}")
             return data
-
 
     def _collect_text_from_gen(self, response_gen) -> str:
         """Flatten generator output into a string."""
