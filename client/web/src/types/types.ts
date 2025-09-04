@@ -9,6 +9,7 @@ export type Topic = {
   brief: string;
   subtopics: Subtopic[];
   resources: string[];
+  video_resources: string[];
   expected_outcome: string;
 };
 

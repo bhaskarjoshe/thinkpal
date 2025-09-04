@@ -18,6 +18,7 @@ class Topic(BaseModel):
     brief: str
     subtopics: List[Subtopic]
     resources: List[str]
+    video_resources: List[str]
     expected_outcome: str
 
 

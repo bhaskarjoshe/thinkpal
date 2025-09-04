@@ -15,13 +15,15 @@ import {
 import type { RoadmapAgentProps, RoadmapContent } from "../../types/types";
 import { useChatStore } from "../../store/chatStore";
 import { handleClick } from "../../utils/chatApiCall";
+import { FaPlayCircle } from "react-icons/fa";
+import VideoModal from "../VideoModal";
 
-const RoadmapAgent = ({
-  component
-}: RoadmapAgentProps) => {
+const RoadmapAgent = ({ component }: RoadmapAgentProps) => {
   const roadmap = component.content_json as RoadmapContent;
 
   const [expandedLevels, setExpandedLevels] = useState<Set<string>>(new Set());
+  const [activeVideo, setActiveVideo] = React.useState(null);
+
   const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set()
@@ -474,6 +476,120 @@ const RoadmapAgent = ({
                                           </div>
                                         )}
 
+                                      {/* Video Resources */}
+                                      {topic.video_resources &&
+                                        topic.video_resources.length > 0 && (
+                                          <div className="relative mt-4">
+                                            <div className="ml-6">
+                                              <button
+                                                onClick={() =>
+                                                  toggleSection(
+                                                    levelName,
+                                                    topic.topic,
+                                                    "video_resources"
+                                                  )
+                                                }
+                                                className="cursor-pointer flex items-center w-full px-3 py-2 rounded-md bg-green-50 hover:bg-green-100 
+                   border border-green-200 transition-all duration-200 text-sm group"
+                                              >
+                                                <Link className="w-3 h-3 mr-2 text-green-600" />
+                                                <span className="flex-1 text-left font-medium text-gray-700">
+                                                  Video Resources (
+                                                  {topic.video_resources.length}
+                                                  )
+                                                </span>
+                                                {expandedSections.has(
+                                                  `${topicKey}-video_resources`
+                                                ) ? (
+                                                  <ChevronDown className="w-3 h-3 text-green-600" />
+                                                ) : (
+                                                  <ChevronRight className="w-3 h-3 text-green-600" />
+                                                )}
+                                              </button>
+
+                                              {expandedSections.has(
+                                                `${topicKey}-video_resources`
+                                              ) && (
+                                                <div className="mt-2 ml-6 bg-white border border-green-200 rounded-md p-3 shadow-sm">
+                                                  <ul className="space-y-3 list-none">
+                                                    {topic.video_resources.map(
+                                                      (video, idx) => {
+                                                        let title = "";
+                                                        let url = "";
+                                                        if (
+                                                          video.includes(":")
+                                                        ) {
+                                                          [title, url] =
+                                                            video.split(
+                                                              /:\s(.+)/
+                                                            );
+                                                        } else {
+                                                          url = video;
+                                                          title = "Video"; // fallback title
+                                                        }
+
+                                                        const videoId =
+                                                          url?.split("v=")[1];
+                                                        const thumbnailUrl =
+                                                          videoId
+                                                            ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+                                                            : null;
+
+                                                        return (
+                                                          <li
+                                                            key={idx}
+                                                            className="flex items-center space-x-3"
+                                                          >
+                                                            {/* Thumbnail */}
+                                                            {thumbnailUrl && (
+                                                              <div
+                                                                className="relative w-48 h-28 flex-shrink-0  p-1 overflow-hidden cursor-pointer group"
+                                                                onClick={() =>
+                                                                  setActiveVideo(
+                                                                    url
+                                                                  )
+                                                                }
+                                                              >
+                                                                <img
+                                                                  src={
+                                                                    thumbnailUrl
+                                                                  }
+                                                                  alt={title}
+                                                                  className="w-full rounded-lg h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                                                />
+                                                                <FaPlayCircle className="absolute inset-0 m-auto text-white text-5xl opacity-80 group-hover:opacity-100 transition-opacity" />
+                                                              </div>
+                                                            )}
+
+                                                            {/* Video Title */}
+                                                            <div
+                                                              className="flex-1 text-sm text-gray-800 cursor-pointer hover:text-green-700 transition-colors"
+                                                              onClick={() =>
+                                                                setActiveVideo(
+                                                                  url
+                                                                )
+                                                              }
+                                                            >
+                                                              {title}
+                                                            </div>
+                                                          </li>
+                                                        );
+                                                      }
+                                                    )}
+                                                  </ul>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
+
+                                      {activeVideo && (
+                                        <VideoModal
+                                          activeVideo={activeVideo}
+                                          setActiveVideo={setActiveVideo}
+                                        />
+                                      )}
+
                                       {/* Expected Outcome */}
                                       {topic.expected_outcome && (
                                         <div className="relative">
@@ -533,7 +649,13 @@ const RoadmapAgent = ({
       {/* Simple Action Button */}
       <div className="mt-12 text-center">
         <button
-          onClick={() => handleClick(chatId,addMessage, "Explore more topics on "+component.title)}
+          onClick={() =>
+            handleClick(
+              chatId,
+              addMessage,
+              "Explore more topics on " + component.title
+            )
+          }
           className="cursor-pointer bg-gradient-to-r from-black/80 via-black/80 to-black/80 hover:from-black hover:via-black hover:to-black 
                    text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl 
                    transform hover:scale-105 transition-all duration-300 flex items-center mx-auto"

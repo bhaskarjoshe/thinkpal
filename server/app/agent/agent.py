@@ -5,6 +5,7 @@ from app.agent.prompts.roadmap_agent_prompt import ROADMAP_AGENT_PROMPT
 from app.agent.prompts.visual_agent_prompt import VISUAL_AGENT_PROMPT
 from app.agent.tools.input_formatting_tool import format_agent_input_func_tool
 from app.agent.tools.knowledge_agent_tools import wikidata_agent_func_tool
+from app.agent.tools.roadmap_agent_tools import youtube_agent_func_tool
 from app.agent.tools.visual_tool import fetch_image_url_tool_func_tool
 from google.adk.agents import Agent
 from google.adk.tools import agent_tool
@@ -32,7 +33,7 @@ quiz_agent = Agent(
     name="QuizAgent",
     model="gemini-2.5-flash",
     instruction=QUIZ_AGENT_PROMPT,
-    tools=[format_agent_input_func_tool],
+    tools=[format_agent_input_func_tool, wikidata_agent_func_tool],
     description="Specialized agent for generating quizzes, MCQs, and practice questions",
 )
 
@@ -41,7 +42,7 @@ roadmap_agent = Agent(
     name="RoadmapAgent",
     model="gemini-2.5-flash",
     instruction=ROADMAP_AGENT_PROMPT,
-    tools=[format_agent_input_func_tool],
+    tools=[format_agent_input_func_tool, youtube_agent_func_tool],
     description="Specialized agent for providing structured learning paths and study plans",
 )
 
