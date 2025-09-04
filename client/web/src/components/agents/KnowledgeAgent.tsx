@@ -56,7 +56,7 @@ const KnowledgeAgent = ({ component }: { component: UIComponent }) => {
     null;
 
   return (
-    <div className="p-6 border max-w-3xl mx-auto rounded-2xl shadow bg-white space-y-5">
+    <div className="p-6 max-w-3xl mx-auto rounded-2xl shadow bg-white space-y-5">
       {/* Title + Download */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">

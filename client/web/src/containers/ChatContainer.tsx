@@ -20,7 +20,7 @@ const ChatContainer = ({
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
   return (
-    <div className="flex flex-col flex-1 gap-3 p-4 overflow-y-auto">
+    <div className="flex flex-col flex-1 gap-3 p-4 overflow-y-auto ">
       {(messages ?? []).map((msg) => (
         <div
           key={msg.id}
@@ -31,13 +31,11 @@ const ChatContainer = ({
           }`}
         >
           {msg.role === "ai" && msg.ui_components ? (
-            <AIComponentRenderer
-              setInputQuery={setInputQuery}
-              components={msg.ui_components}
-            />
+            <AIComponentRenderer components={msg.ui_components} />
           ) : (
             msg.content
           )}
+          
         </div>
       ))}
       {loading && <CardSkeleton />}

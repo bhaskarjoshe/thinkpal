@@ -57,7 +57,7 @@ visual_agent = Agent(
 # orchestrator agent (tutor agent)
 tutor_agent = Agent(
     name="TutorAgent",
-    model="gemini-2.5-flash",
+    model="gemini-2.0-flash",
     tools=[
         agent_tool.AgentTool(agent=knowledge_agent),
         agent_tool.AgentTool(agent=code_agent),

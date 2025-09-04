@@ -6,12 +6,10 @@ import RoadmapAgent from "./agents/RoadmapAgent";
 import VisualAgent from "./agents/VisualAgent";
 
 interface AIComponentRendererProps {
-  setInputQuery: (query: string) => void;
   components: UIComponent[];
 }
 
 export const AIComponentRenderer = ({
-  setInputQuery,
   components,
 }: AIComponentRendererProps) => {
   if (!components || components.length === 0) {
@@ -23,29 +21,25 @@ export const AIComponentRenderer = ({
       {components.map((component, index) => {
         switch (component.component_type) {
           case "quiz":
-            return <QuizAgent key={index} component={component} index={index} />;
+            return (
+              <QuizAgent key={index} component={component} index={index} />
+            );
 
           case "roadmap":
-            return (
-              <RoadmapAgent
-                key={index}
-                component={component}
-              />
-            );
+            return <RoadmapAgent key={index} component={component} />;
 
           case "code":
-            return <CodeAgent key={index} component={component} index={index} />;
+            return (
+              <CodeAgent key={index} component={component} index={index} />
+            );
 
           case "visual":
-            return <VisualAgent key={index} component={component} index={index} />;
+            return (
+              <VisualAgent key={index} component={component} index={index} />
+            );
 
           case "knowledge":
-            return (
-              <KnowledgeAgent
-                key={index}
-                component={component}
-              />
-            );
+            return <KnowledgeAgent key={index} component={component} />;
 
           default:
             return (
