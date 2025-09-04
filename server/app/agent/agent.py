@@ -4,6 +4,7 @@ from app.agent.prompts.quiz_agent_prompt import QUIZ_AGENT_PROMPT
 from app.agent.prompts.roadmap_agent_prompt import ROADMAP_AGENT_PROMPT
 from app.agent.prompts.visual_agent_prompt import VISUAL_AGENT_PROMPT
 from app.agent.tools.input_formatting_tool import format_agent_input_func_tool
+from app.agent.tools.knowledge_agent_tools import wikidata_agent_func_tool
 from app.agent.tools.visual_tool import fetch_image_url_tool_func_tool
 from google.adk.agents import Agent
 from google.adk.tools import agent_tool
@@ -13,7 +14,7 @@ knowledge_agent = Agent(
     name="KnowledgeAgent",
     model="gemini-2.5-flash",
     instruction=KNOWLEDGE_AGENT_SYSTEM_PROMPT,
-    tools=[format_agent_input_func_tool],
+    tools=[format_agent_input_func_tool, wikidata_agent_func_tool],
     description="Specialized agent for answering conceptual and knowledge-based queries for Computer Science students",
 )
 

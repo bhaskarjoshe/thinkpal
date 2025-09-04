@@ -1,3 +1,5 @@
+import json
+
 from app.agent.manager import agent_manager
 from app.config.logger_config import logger
 from app.db.chat import create_chat_session
@@ -22,11 +24,16 @@ def handle_chat_request(chat_id: str, query: str, db: Session, user: User):
 
         ui_components = _format_response_to_ui_components(response)
 
+        # save messages in DB
         for comp in ui_components:
-            logger.info(f"{chat_id}: UI component: {comp}")
             content = comp.get("content", "")
-            logger.info(f"{chat_id}: Component content: {content}")
-            save_message(db, chat_id, query, content)
+            # if content is JSON string, convert to text for DB
+            if isinstance(content, dict):
+                content_to_save = json.dumps(content)
+            else:
+                content_to_save = str(content)
+            save_message(db, chat_id, query, content_to_save)
+            logger.info(f"{chat_id}: Saved component: {comp['title']}")
 
         return chat_id, {"ui_components": ui_components}
 
@@ -40,13 +47,13 @@ def _format_response_to_ui_components(response):
     """Normalize agent/tool responses into a consistent UI components list."""
     if isinstance(response, dict):
         if "ui_components" in response:
-            return response["ui_components"]
+            return [_parse_content_json(comp) for comp in response["ui_components"]]
         if "tool_responses" in response:
             return _convert_tool_responses_to_ui_components(response["tool_responses"])
-        return [response]
+        return [_parse_content_json(response)]
 
     if isinstance(response, list):
-        return response
+        return [_parse_content_json(comp) for comp in response]
 
     return [
         {
@@ -65,21 +72,46 @@ def _convert_tool_responses_to_ui_components(tool_responses):
         tool_name = tool_response.get("tool", "Unknown")
         response_content = tool_response.get("response", "")
 
-        if isinstance(response_content, dict):
-            ui_components.append(
-                _ensure_ui_component_defaults(response_content, tool_name)
-            )
-        else:
-            comp_type = _map_tool_to_component_type(tool_name)
-            ui_components.append(
-                {
+        # If response is a string but looks like JSON, parse it
+        if isinstance(response_content, str):
+            try:
+                parsed_response = json.loads(response_content)
+                response_content = _ensure_ui_component_defaults(
+                    parsed_response, tool_name
+                )
+            except json.JSONDecodeError:
+                # fallback to string content
+                comp_type = _map_tool_to_component_type(tool_name)
+                response_content = {
                     "component_type": comp_type,
                     "title": f"{tool_name} Response",
                     "content": response_content,
                     "features": [comp_type],
                 }
+
+        elif isinstance(response_content, dict):
+            response_content = _ensure_ui_component_defaults(
+                response_content, tool_name
             )
+
+        ui_components.append(response_content)
+
     return ui_components
+
+
+def _parse_content_json(component: dict):
+    """Parse nested JSON in `content` if it's a stringified JSON."""
+    if component.get("component_type") == "code" and isinstance(
+        component.get("content"), str
+    ):
+        try:
+            parsed = json.loads(component["content"])
+            return _ensure_ui_component_defaults(
+                parsed, component.get("title", "CodeAgent")
+            )
+        except Exception:
+            return component
+    return component
 
 
 def _ensure_ui_component_defaults(ui_component: dict, tool_name: str):
