@@ -15,6 +15,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useAuthStore } from "../store/authStore";
 import { useUserStore } from "../store/userStore";
+import { useChatStore } from "../store/chatStore";
 
 const ProfilePage = () => {
   const { logout } = useAuthStore();
@@ -22,6 +23,7 @@ const ProfilePage = () => {
   const { userData } = useUserStore();
 
   const handleLogout = () => {
+    useChatStore.getState().resetStore();
     logout();
     navigate("/");
   };

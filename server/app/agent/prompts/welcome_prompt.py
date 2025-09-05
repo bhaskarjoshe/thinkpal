@@ -28,6 +28,7 @@ Your task:
 4. Optionally, highlight recommended_roles from resume_analysis for career guidance.
 5. End with a teacher-like nudge: ask if they’d like to explore one of these actions or discover something new.
 6. Always leave "features" as an empty array [].
+7. Be realistic about the student's current level and capabilities, and give suggestions wisely.
 
 Respond in **strict JSON** using this schema:
 {{
