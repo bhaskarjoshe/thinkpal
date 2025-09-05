@@ -10,6 +10,8 @@ type User = {
   skills?: string[];
   interests?: string[];
   programming_languages?: string[];
+  resume_data?: any;
+  resume_analysis?: any;
 };
 
 type UserState = {

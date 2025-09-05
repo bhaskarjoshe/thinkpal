@@ -66,7 +66,7 @@ const KnowledgeAgent = ({ component }: { component: UIComponent }) => {
         {isLongResponse && (
           <button
             onClick={handleDownload}
-            className="flex items-center gap-1 px-3 py-1 text-sm border rounded-lg 
+            className="cursor-pointer flex items-center gap-1 px-3 py-1 text-sm border rounded-lg 
                      hover:bg-gray-100 transition text-gray-700"
           >
             <Download className="w-4 h-4" />
@@ -86,7 +86,7 @@ const KnowledgeAgent = ({ component }: { component: UIComponent }) => {
           <button
             disabled={page === 0}
             onClick={() => setPage((p) => p - 1)}
-            className="px-3 py-1 rounded border disabled:opacity-50"
+            className="cursor-pointer px-3 py-1 rounded border disabled:opacity-50"
           >
             Prev
           </button>
@@ -96,7 +96,7 @@ const KnowledgeAgent = ({ component }: { component: UIComponent }) => {
           <button
             disabled={page === pages.length - 1}
             onClick={() => setPage((p) => p + 1)}
-            className="px-3 py-1 rounded border disabled:opacity-50"
+            className="cursor-pointer px-3 py-1 rounded border disabled:opacity-50"
           >
             Next
           </button>

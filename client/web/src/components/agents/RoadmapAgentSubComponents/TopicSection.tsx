@@ -109,51 +109,52 @@ const TopicSection: React.FC<TopicSectionProps> = ({
       )}
 
       {/* Resources */}
-      {topic.resources && topic.resources.length > 0 && (
-        <div className="relative">
-          <div className="ml-6">
-            <button
-              onClick={() => toggleSection(levelName, topic.topic, "resources")}
-              className="cursor-pointer flex items-center w-full px-3 py-2 rounded-md bg-purple-50 hover:bg-purple-100 
-                         border border-purple-200 transition-all duration-200 text-sm group"
-            >
-              <Link className="w-3 h-3 mr-2 text-purple-600" />
-              <span className="flex-1 text-left font-medium text-gray-700">
-                Resources ({topic.resources.length})
-              </span>
-              {expandedSections.has(`${topicKey}-resources`) ? (
-                <ChevronDown className="w-3 h-3 text-purple-600" />
-              ) : (
-                <ChevronRight className="w-3 h-3 text-purple-600" />
-              )}
-            </button>
+{topic.resources && topic.resources.length > 0 && (
+  <div className="relative">
+    <div className="ml-6">
+      <button
+        onClick={() => toggleSection(levelName, topic.topic, "resources")}
+        className="cursor-pointer flex items-center w-full px-3 py-2 rounded-md bg-purple-50 hover:bg-purple-100 
+                   border border-purple-200 transition-all duration-200 text-sm group"
+      >
+        <Link className="w-3 h-3 mr-2 text-purple-600" />
+        <span className="flex-1 text-left font-medium text-gray-700">
+          Resources ({topic.resources.length})
+        </span>
+        {expandedSections.has(`${topicKey}-resources`) ? (
+          <ChevronDown className="w-3 h-3 text-purple-600" />
+        ) : (
+          <ChevronRight className="w-3 h-3 text-purple-600" />
+        )}
+      </button>
 
-            {expandedSections.has(`${topicKey}-resources`) && (
-              <div className="mt-2 ml-6 bg-white border border-purple-200 rounded-md p-3 shadow-sm">
-                <ul className="space-y-2">
-                  {topic.resources.map((resource, idx) => {
-                    const [label, url] = resource.split(/:\s(.+)/);
-                    return (
-                      <li key={idx} className="flex items-start text-sm">
-                        <span className="w-1 h-1 bg-purple-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                        <a
-                          href={url || label}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-purple-600 hover:text-purple-800 underline hover:no-underline transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {label || url}
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-          </div>
+      {expandedSections.has(`${topicKey}-resources`) && (
+        <div className="mt-2 ml-6 bg-white border border-purple-200 rounded-md p-3 shadow-sm">
+          <ul className="space-y-2 list-none">
+            {topic.resources.map((resource, idx) => {
+              const [title, url] = resource.split(/:\s(.+)/); // split only at first colon
+              return (
+                <li key={idx} className="flex items-start text-sm">
+                  <span className="w-1 h-1 bg-purple-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                  <a
+                    href={url?.trim()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-purple-600 hover:text-purple-800 underline hover:no-underline transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {title?.trim()}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       )}
+    </div>
+  </div>
+)}
+
 
       {/* Video Resources */}
       {topic.video_resources && topic.video_resources.length > 0 && (
