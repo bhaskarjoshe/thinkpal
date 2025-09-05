@@ -109,6 +109,7 @@ class AgentManager:
                     programming_languages=", ".join(
                         getattr(user, "programming_languages", []) or []
                     ),
+                    resume_analysis=", ".join(getattr(user, "resume_analysis", []) or []),
                 )
                 try:
                     setattr(self.runner.agent, "instruction", instruction_val)

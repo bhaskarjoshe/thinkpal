@@ -22,7 +22,7 @@ export default function AddDocument({ maxFileSizeMB = 5 }: AddDocumentProps) {
     const userMessage: ChatMessage = {
       id: uuidv4(),
       role: "user",
-      content: "Uploaded the resume",
+      content: "Analysing the resume",
     };
     addMessage(userMessage);
     setLoading(true);
