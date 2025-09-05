@@ -7,6 +7,8 @@ from app.models.user_model import User
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+from app.agent.manager import agent_manager
+
 
 def extract_text_from_resume(file: UploadFile) -> str:
     """
@@ -56,4 +58,9 @@ def analyze_resume(file: UploadFile, user: User, db: Session) -> dict:
     if not resume_text.strip():
         return {"error": "No text extracted from resume"}
 
-    return {"resume_data": resume_text}
+    query = f"__RESUME__{resume_text}"
+
+    response = agent_manager.run_agent(query, [], user, "")
+
+    logger.info(f"Resume analysis response: {response}")
+    return response

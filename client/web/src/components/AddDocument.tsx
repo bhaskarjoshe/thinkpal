@@ -1,8 +1,11 @@
-import { useState, useEffect, useRef, type ChangeEvent } from "react";
+import { useState, useRef, type ChangeEvent } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { MdOutlineDocumentScanner } from "react-icons/md";
 import { IoDocumentsOutline } from "react-icons/io5";
 import { uploadResume } from "../api/document";
+import { useChatStore } from "../store/chatStore";
+import { v4 as uuidv4 } from "uuid";
+import type { ChatMessage } from "../types/types";
 
 interface AddDocumentProps {
   maxFileSizeMB?: number;
@@ -13,17 +16,40 @@ export default function AddDocument({ maxFileSizeMB = 5 }: AddDocumentProps) {
   const MAX_FILE_SIZE = maxFileSizeMB * 1024 * 1024;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleAddDocument = async (file: File, type: string) => {
-    console.log(`Uploading ${type}:`, file);
+  const { addMessage, setLoading } = useChatStore();
 
-    if (type === "Resume") {
-      try {
-        await uploadResume(file);
-      } catch (err) {
-        console.error("Resume upload failed:", err);
-      }
-    } else {
-      console.log("Other document upload not implemented yet.");
+  const handleResumeUpload = async (file: File) => {
+    const userMessage: ChatMessage = {
+      id: uuidv4(),
+      role: "user",
+      content: "Uploaded the resume",
+    };
+    addMessage(userMessage);
+    setLoading(true);
+
+    try {
+      const response = await uploadResume(file);
+
+      const aiMessage: ChatMessage = {
+        id: uuidv4(),
+        role: "ai",
+        ui_components:
+          response.ui_components && response.ui_components.length > 0
+            ? response.ui_components
+            : [
+                {
+                  component_type: "knowledge",
+                  title: "Resume Analysis",
+                  content: "No response from resume upload.",
+                  features: [],
+                },
+              ],
+      };
+      addMessage(aiMessage);
+    } catch (err) {
+      console.error("Resume upload failed:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,33 +62,21 @@ export default function AddDocument({ maxFileSizeMB = 5 }: AddDocumentProps) {
       return;
     }
 
-    handleAddDocument(file, type);
+    if (type === "Resume") {
+      handleResumeUpload(file);
+    } else {
+      console.log("Other document upload not implemented yet.");
+    }
+
     setShowOptions(false);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setShowOptions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <div className="relative inline-block" ref={containerRef}>
       {/* Main Button */}
       <button
         onClick={(e) => {
-          if (e.detail !== 0) {
-            setShowOptions(!showOptions);
-          }
+          if (e.detail !== 0) setShowOptions(!showOptions);
         }}
         className="text-gray-600 bg-gray-50 hover:bg-gray-100 w-10 h-10 p-2 rounded-full
                    flex items-center justify-center cursor-pointer transition-colors duration-200

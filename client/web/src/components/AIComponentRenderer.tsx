@@ -4,6 +4,7 @@ import KnowledgeAgent from "./agents/KnowledgeAgent";
 import QuizAgent from "./agents/QuizAgent";
 import RoadmapAgent from "./agents/RoadmapAgent";
 import VisualAgent from "./agents/VisualAgent";
+import ResumeReport from "./agents/ResumeData";
 
 interface AIComponentRendererProps {
   components: UIComponent[];
@@ -40,6 +41,9 @@ export const AIComponentRenderer = ({
 
           case "knowledge":
             return <KnowledgeAgent key={index} component={component} />;
+
+          case "resume_data":
+            return <ResumeReport key={index} component={component} />;
 
           default:
             return (

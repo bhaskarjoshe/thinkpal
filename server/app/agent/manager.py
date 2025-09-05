@@ -10,6 +10,7 @@ from app.agent.agent import roadmap_agent
 from app.agent.agent import tutor_agent
 from app.agent.agent import visual_agent
 from app.agent.prompts.orchestrator_prompt import ROUTING_PROMPT
+from app.agent.prompts.resume_analysis_agent_prompt import RESUME_ANALYSIS_AGENT_PROMPT
 from app.agent.prompts.welcome_prompt import WELCOME_PROMPT
 from app.config.logger_config import logger
 from google.adk.runners import Runner
@@ -54,8 +55,53 @@ class AgentManager:
                 chat_id, f"user_{user.id}" if user else "anonymous"
             )
 
-            if query == "__INIT__":
-                self.runner.agent.instruction = WELCOME_PROMPT.format(
+            if query.startswith("__RESUME__"):
+                resume_text = query.replace("__RESUME__", "", 1).strip()
+
+                try:
+                    setattr(
+                        self.runner.agent, "instruction", RESUME_ANALYSIS_AGENT_PROMPT
+                    )
+                except Exception:
+                    logger.debug(
+                        "Agent does not allow setting instruction attribute at runtime; proceeding with default."
+                    )
+
+                content_message = Content(role="user", parts=[Part(text=resume_text)])
+
+                logger.info("Running TutorAgent for resume analysis")
+                response_gen = self.runner.run(
+                    user_id=f"user_{user.id if user else 'anon'}",
+                    session_id=session_id,
+                    new_message=content_message,
+                )
+
+                response = self._extract_agent_response(response_gen)
+
+                return {
+                    "status": "success",
+                    "chat_id": chat_id,
+                    "ui_components": (
+                        [response]
+                        if isinstance(response, dict)
+                        else [
+                            {
+                                "component_type": "resume_data",
+                                "title": "Resume Analysis",
+                                "summary": str(response),
+                                "strengths": [],
+                                "areas_for_improvement": [],
+                                "next_steps": [],
+                                "recommended_roles": [],
+                                "skill_gap_analysis": {},
+                                "academic_alignment": {},
+                            }
+                        ]
+                    ),
+                    "messages": None,
+                }
+            elif query == "__INIT__":
+                instruction_val = WELCOME_PROMPT.format(
                     name=getattr(user, "name", "Guest"),
                     semester=getattr(user, "semester", "Unknown"),
                     skills=", ".join(getattr(user, "skills", []) or []),
@@ -64,10 +110,21 @@ class AgentManager:
                         getattr(user, "programming_languages", []) or []
                     ),
                 )
+                try:
+                    setattr(self.runner.agent, "instruction", instruction_val)
+                except Exception:
+                    logger.debug(
+                        "Agent does not allow setting instruction attribute at runtime; proceeding with default."
+                    )
             else:
-                self.runner.agent.instruction = ROUTING_PROMPT
+                try:
+                    setattr(self.runner.agent, "instruction", ROUTING_PROMPT)
+                except Exception:
+                    logger.debug(
+                        "Agent does not allow setting instruction attribute at runtime; proceeding with default."
+                    )
 
-            content_message = Content(role="user", parts=[Part(text=query)])
+            content_message = Content(role="user", parts=[Part(text=str(query))])
 
             logger.info(f"Running TutorAgent for query: {query}")
             response_gen = self.runner.run(
@@ -212,6 +269,8 @@ class AgentManager:
                     }
                     data.pop("levels", None)
                     data.pop("roadmap_type", None)
+            if data.get("component_type") == "resume_data":
+                return data
             return data
         except Exception as e:
             logger.exception(f"Failed to normalize UIComponent: {e}")

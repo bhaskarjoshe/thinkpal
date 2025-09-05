@@ -76,6 +76,25 @@ export type KnowledgeContent = {
   next_teacher_prompt?: string;
 };
 
+export type ResumeDataContent = {
+  summary: string;
+  strengths: string[];
+  areas_for_improvement: string[];
+  next_steps: string[];
+  recommended_roles: string[];
+  skill_gap_analysis: {
+    current_skills: string[];
+    missing_in_demand_skills: string[];
+  };
+  academic_alignment: {
+    semester: string;
+    projects_alignment: string;
+    future_academics_suggestion: string[];
+  };
+};
+
+
+
 export type UIComponent = {
   component_type:
     | "knowledge"
@@ -84,7 +103,8 @@ export type UIComponent = {
     | "roadmap"
     | "code"
     | "visual"
-    | "text";
+    | "text"
+    | "resume_data";
 
   title: string;
   content?: string | string[];
@@ -95,6 +115,7 @@ export type UIComponent = {
     | VisualContent
     | RoadmapContent
     | Record<string, any>
+    | ResumeDataContent
     | null;
 
   image_url?: string | null;
